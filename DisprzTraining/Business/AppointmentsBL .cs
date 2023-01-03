@@ -59,8 +59,8 @@ namespace DisprzTraining.Business
             {
                 return false;
             }
-            bool isAnyList=DataStore.newList.Count!=0;
-            if(isAnyList)
+            // bool isAnyList=DataStore.newList.Count!=0;
+            if(DataStore.newList.Any())
             {
                 foreach(var item in DataStore.newList)
                 {

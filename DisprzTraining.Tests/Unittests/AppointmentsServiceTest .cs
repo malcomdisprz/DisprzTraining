@@ -9,7 +9,7 @@ namespace DisprzTraining.Tests
             //Arrange
             AddNewAppointment data = new AddNewAppointment()
             {
-                Date = "18-12-2022",
+                Date = "12-18-2022",
                 Title = "test",
                 Description = "test-case",
                 StartTime = DateTime.Now,
@@ -33,7 +33,7 @@ namespace DisprzTraining.Tests
             //Arrange
             AddNewAppointment data = new AddNewAppointment()
             {
-                Date = "18-12-2022",
+                Date = "12-18-2022",
                 Title = "test",
                 Description = "test-case",
                 StartTime = DateTime.Now.AddMinutes(30),
@@ -71,10 +71,10 @@ namespace DisprzTraining.Tests
         {
             //Arrange
             var mock = new Mock<IAppointmentsBL>();
-            mock.Setup(services => services.GetAppointments("18-12-2022")).ReturnsAsync(MockSample.data);
+            mock.Setup(services => services.GetAppointments("12-18-2022")).ReturnsAsync(MockSample.data);
             var systemUnderTest = new AppointmentsController(mock.Object);
             //Act
-            var result = await systemUnderTest.GetAppointmentsForDay("18-12-2022");
+            var result = await systemUnderTest.GetAppointmentsForDay("12-18-2022");
             var res = result.Result as OkObjectResult;
 
             //Assert
@@ -117,7 +117,7 @@ namespace DisprzTraining.Tests
             //Arrange
             Appointment data= new Appointment(){
               Id=new Guid("7c9e6679-7425-40de-944b-e07fc1f90ae7"),
-              Date="18-12-2022",
+              Date="12-18-2022",
               Title="lk",
               Description="test",
               StartTime=DateTime.Now,
@@ -138,7 +138,7 @@ namespace DisprzTraining.Tests
             //Arrange
             Appointment data= new Appointment(){
               Id=new Guid("7c9e6679-7425-40de-944b-e07fc1f90a7e"),
-              Date="18-12-2022",
+              Date="12-18-2022",
               Title="lk",
               Description="lkljkhgfds",
               StartTime=DateTime.Now,

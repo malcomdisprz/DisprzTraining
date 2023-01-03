@@ -50,7 +50,7 @@ namespace DisprzTraining.Tests
          
 
         //Act
-         var response=await client.GetAsync("api/appointments/21-12-2022");
+         var response=await client.GetAsync("api/appointments/12-21-2022");
           response.EnsureSuccessStatusCode();
 
           var content=await response.Content.ReadAsStringAsync();
@@ -73,7 +73,7 @@ namespace DisprzTraining.Tests
           var client=_httpclient.CreateClient();
            AddNewAppointment data = new AddNewAppointment()
             {
-                Date = "19-12-2022",
+                Date = "12-19-2022",
                 Title = "test",
                 Description = "test-case",
                 StartTime = DateTime.Now.AddMinutes(30),
@@ -81,7 +81,7 @@ namespace DisprzTraining.Tests
             };
          
         //Act
-          var response=await client.PostAsync("api/appointments",Helper.GetStringContent(data));
+          var response=await client.PostAsync("api/appointments",TestHelper.GetStringContent(data));
           response.EnsureSuccessStatusCode();
 
           var content=await response.Content.ReadAsStringAsync();
@@ -100,7 +100,7 @@ namespace DisprzTraining.Tests
           var client=_httpclient.CreateClient();
            AddNewAppointment data = new AddNewAppointment()
             {
-                Date = "21-12-2022",
+                Date = "12-21-2022",
                 Title = "test",
                 Description = "test-case",
                 StartTime=new DateTime(2022,12,21,11,15,0),
@@ -108,7 +108,7 @@ namespace DisprzTraining.Tests
             };
          
         //Act
-          var response=await client.PostAsync("api/appointments",Helper.GetStringContent(data));
+          var response=await client.PostAsync("api/appointments",TestHelper.GetStringContent(data));
 
           
           Assert.Equal(HttpStatusCode.Conflict,response.StatusCode);
@@ -124,7 +124,7 @@ namespace DisprzTraining.Tests
           var client=_httpclient.CreateClient();
           Appointment data=new Appointment(){
               Id=new Guid("7c9e6679-7425-40de-944b-e07fc1f90ae7"),
-              Date="21-12-2022",
+              Date="12-21-2022",
               Title="test-update",
               Description="test-scenarios-updated",
               StartTime=new DateTime(2022,12,21,11,0,0),
@@ -133,7 +133,7 @@ namespace DisprzTraining.Tests
           
       
         //Act
-          var response=await client.PutAsync("api/appointments",Helper.GetStringContent(data));
+          var response=await client.PutAsync("api/appointments",TestHelper.GetStringContent(data));
 
           response.EnsureSuccessStatusCode();
 
@@ -153,7 +153,7 @@ namespace DisprzTraining.Tests
           var client=_httpclient.CreateClient();
           Appointment data=new Appointment(){
               Id=new Guid("7c9e6679-7425-40de-944b-e07fc1f90ae7"),
-              Date="19-12-2022",
+              Date="12-19-2022",
               Title="update-scenario",
               Description="test-update-url",
               StartTime=new DateTime(2022,12,21,11,0,0),
@@ -162,7 +162,7 @@ namespace DisprzTraining.Tests
           
       
         //Act
-          var response=await client.PutAsync("api/appointments",Helper.GetStringContent(data));
+          var response=await client.PutAsync("api/appointments",TestHelper.GetStringContent(data));
 
         //Assert
            Assert.Equal(HttpStatusCode.Conflict,response.StatusCode);

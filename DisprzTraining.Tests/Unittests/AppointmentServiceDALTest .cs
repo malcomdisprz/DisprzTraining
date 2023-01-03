@@ -10,7 +10,7 @@ namespace DisprzTraining.Tests
       //Arrange
       AddNewAppointment data = new AddNewAppointment()
             {
-                Date = "18-12-2022",
+                Date = "12-18-2022",
                 Title = "test",
                 Description = "test-case",
                 StartTime = DateTime.Now.AddMinutes(30),
@@ -45,7 +45,7 @@ namespace DisprzTraining.Tests
       var systemUnderTest=new AppointmentsDAL();
 
       //Act
-      var result=await systemUnderTest.GetAppointmentsByDate("18-12-2022");
+      var result=await systemUnderTest.GetAppointmentsByDate("12-18-2022");
 
       //Assert
       Assert.IsType<List<Appointment>>(result);
@@ -85,7 +85,7 @@ namespace DisprzTraining.Tests
     {
       Appointment data= new Appointment(){
               Id=new Guid("7c9e6679-7425-40de-944b-e07fc1f90a7e"),
-              Date="21-12-2022",
+              Date="12-21-2022",
               Title="Lalith-updated",
               Description="test",
               StartTime=DateTime.Now,
@@ -106,7 +106,7 @@ namespace DisprzTraining.Tests
     {
       Appointment data= new Appointment(){
               Id=new Guid("7c9e6679-7425-40de-944b-e07fc1f90a7e"),
-              Date="21-12-2022",
+              Date="12-21-2022",
               Title="Lalith-updated",
               Description="test",
               StartTime=DateTime.Now,

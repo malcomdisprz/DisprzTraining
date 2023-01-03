@@ -9,7 +9,7 @@ namespace DisprzTraining.Tests
             //Arrange
             AddNewAppointment data = new AddNewAppointment()
             {
-                Date = "18-12-2022",
+                Date = "12-18-2022",
                 Title = "test",
                 Description = "test-case",
                 StartTime = DateTime.Now,
@@ -30,7 +30,7 @@ namespace DisprzTraining.Tests
             //Arrange
             AddNewAppointment data = new AddNewAppointment()
             {
-                Date = "18-12-2022",
+                Date = "12-18-2022",
                 Title = "test",
                 Description = "test-case",
                 StartTime = DateTime.Now.AddMinutes(30),
@@ -64,10 +64,10 @@ namespace DisprzTraining.Tests
         {
             //Arrange
             var mock = new Mock<IAppointmentsDAL>();
-            mock.Setup(services => services.GetAppointmentsByDate("18-12-2022")).ReturnsAsync(MockSample.data);
+            mock.Setup(services => services.GetAppointmentsByDate("12-18-2022")).ReturnsAsync(MockSample.data);
             var systemUnderTest = new AppointmentsBL(mock.Object);
             //Act
-            var result = await systemUnderTest.GetAppointments("18-12-2022");
+            var result = await systemUnderTest.GetAppointments("12-18-2022");
             //Assert
             Assert.IsType<List<Appointment>>(result);
            Assert.Equal((MockSample.data).Count,result.Count);
@@ -104,7 +104,7 @@ namespace DisprzTraining.Tests
             //Arrange
             Appointment data= new Appointment(){
               Id=new Guid("7c9e6679-7425-40de-944b-e07fc1f90ae7"),
-              Date="18-12-2022",
+              Date="12-18-2022",
               Title="lk",
               Description="test",
               StartTime=DateTime.Now,
@@ -127,7 +127,7 @@ namespace DisprzTraining.Tests
             //Arrange
             Appointment data= new Appointment(){
               Id=new Guid("7c9e6679-7425-40de-944b-e07fc1f90a56"),
-              Date="19-12-2022",
+              Date="12-19-2022",
               Title="lk",
               Description="test",
               StartTime=DateTime.Now,
@@ -150,7 +150,7 @@ namespace DisprzTraining.Tests
             //Arrange
             Appointment data= new Appointment(){
               Id=new Guid("7c9e6679-7425-40de-944b-e07fc1f80ae7"),
-              Date="21-12-2022",
+              Date="12-21-2022",
               Title="lk-conflict",
               Description="test-scenarios",
               StartTime=new DateTime(2022,12,21,11,30,0),

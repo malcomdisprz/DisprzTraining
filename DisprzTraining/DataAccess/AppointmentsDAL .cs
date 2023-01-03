@@ -63,7 +63,7 @@ namespace DisprzTraining.DataAccess
                 update.Single().EndTime = data.EndTime;
                 return Task.FromResult(true);
             }
-            catch
+            catch(Exception e)
             {
                 return Task.FromResult(false);
             }

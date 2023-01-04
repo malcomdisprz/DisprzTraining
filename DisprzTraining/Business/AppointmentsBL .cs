@@ -15,6 +15,15 @@ namespace DisprzTraining.Business
 
         public async Task<bool> CreateNewAppointment(AddNewAppointment data)
         {
+            if(data.StartTime==data.EndTime)
+            {
+                throw new Exception("Cannot add a event as time clashes");
+            }
+            
+            if( data.EndTime<data.StartTime)
+            {
+                throw new Exception("Cannot initiate event as StartTime is Greater than endTime");
+            }
             
             bool NoConflict=await CheckConflict(data);
             if(NoConflict==true)
@@ -45,6 +54,14 @@ namespace DisprzTraining.Business
         public async Task<bool> UpdateAppointments(Appointment data)
         {
             
+            if(data.StartTime==data.EndTime)
+            {
+                throw new Exception("Cannot add a event as time clashes");
+            }
+            if( data.EndTime<data.StartTime)
+            {
+                throw new Exception("Cannot initiate event as StartTime is Greater than endTime");
+            }
             bool NoConflict=await CheckUpdateConflict(data);
             if(NoConflict==true)
             {
@@ -55,10 +72,7 @@ namespace DisprzTraining.Business
         }
         private async Task<bool> CheckConflict(AddNewAppointment data)
         {
-            if(data.StartTime==data.EndTime||data.EndTime<data.StartTime)
-            {
-                return false;
-            }
+            
             // bool isAnyList=DataStore.newList.Count!=0;
             if(DataStore.newList.Any())
             {
@@ -76,13 +90,6 @@ namespace DisprzTraining.Business
 
         private async Task<bool> CheckUpdateConflict(Appointment data)
         {
-            if(data.StartTime==data.EndTime||data.EndTime<data.StartTime)
-            {
-                return false;
-            }
-            
-            
-            
             // if(isAnyList==true)
             // {
                 foreach(var item in DataStore.newList)

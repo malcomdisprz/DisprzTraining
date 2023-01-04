@@ -112,11 +112,28 @@ namespace DisprzTraining.Tests
 
           
           Assert.Equal(HttpStatusCode.Conflict,response.StatusCode);
-
         }
 
-        
 
+        [Fact]
+        public async Task Create_Appointment_Throws_Exception_And_Conflict_Code()
+        {
+         //Arrange
+          var client=_httpclient.CreateClient();
+           AddNewAppointment data = new AddNewAppointment()
+            {
+                Date = "12-21-2022",
+                Title = "test",
+                Description = "test-case",
+                StartTime=new DateTime(2022,12,21,11,15,0),
+              EndTime=new DateTime(2022,12,21,11,15,0),
+            };
+         
+        //Act
+          var response=await client.PostAsync("api/appointments",TestHelper.GetStringContent(data));
+          //Assert
+          Assert.Equal(HttpStatusCode.Conflict,response.StatusCode);
+        }
         [Fact]
          public async Task Update_Returns_Success_Code()
         {

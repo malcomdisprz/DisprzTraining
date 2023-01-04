@@ -46,6 +46,26 @@ namespace DisprzTraining.Tests
             Assert.False(result);
            
         }
+       [Fact]
+        public async Task Create_NewAppointment_Throws_Exception()
+        {
+            //Arrange
+            AddNewAppointment data = new AddNewAppointment()
+            {
+                Date = "12-18-2022",
+                Title = "test",
+                Description = "test-case",
+                 StartTime=new DateTime(2022,12,21,11,0,0),
+                 EndTime=new DateTime(2022,12,21,11,0,0),
+            };
+            var mock = new Mock<IAppointmentsDAL>();
+            mock.Setup(services => services.CreateNewAppointments(data)).ThrowsAsync(new Exception());
+            var systemUnderTest = new AppointmentsBL(mock.Object);
+            //Assert
+            Assert.ThrowsAnyAsync<Exception>(()=>systemUnderTest.CreateNewAppointment(data));
+    
+            
+        }
 
           [Fact]
         public async Task Get_All_Added_Appointments_Returns_List()

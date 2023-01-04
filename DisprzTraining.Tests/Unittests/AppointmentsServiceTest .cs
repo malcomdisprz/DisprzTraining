@@ -48,6 +48,7 @@ namespace DisprzTraining.Tests
             //Assert
             Assert.Equal(409,res?.StatusCode);               
         }
+        
          [Fact]
         public async Task Get_All_Appointments_Returns_StatusCode_200()
         {
@@ -85,7 +86,7 @@ namespace DisprzTraining.Tests
     
 
         [Fact]
-        public async Task Remove_Appoitments_Returns_Status_Code_200()
+        public async Task Remove_Appoitments_Returns_Status_Code_204()
         {
             //Arrange
             var mock = new Mock<IAppointmentsBL>();
@@ -93,9 +94,9 @@ namespace DisprzTraining.Tests
             var systemUnderTest = new AppointmentsController(mock.Object);
             //Act
             var result = await systemUnderTest.Remove(new Guid("eaa24756-3fac-4e46-b4bb-074ff4f5b846"));
-            var res = result as OkObjectResult;
+            var res = result as NoContentResult;
             //Assert
-            Assert.Equal(200, res?.StatusCode);   
+            Assert.Equal(204,res?.StatusCode);   
         }
         [Fact]
         public async Task Remove_Appoitments_Returns_Status_Code_404()

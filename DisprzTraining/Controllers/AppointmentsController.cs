@@ -25,6 +25,8 @@ namespace DisprzTraining.Controllers
          [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<IActionResult> CreateAppointment (AddNewAppointment data)
         {
+            try{
+
              bool postCreated=await _appointmentsBL.CreateNewAppointment(data);
              if(postCreated==true)
              {
@@ -32,8 +34,13 @@ namespace DisprzTraining.Controllers
              }
              else
              {
-                return Conflict();
+                return Conflict("Meeting is already assigned");
              }
+            }
+            catch(Exception e)
+            {
+                return Conflict(e.Message);
+            }
         }
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Appointment))]
@@ -54,7 +61,7 @@ namespace DisprzTraining.Controllers
         
 
         [HttpDelete("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(bool))]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
 
         public async Task<IActionResult> Remove(Guid id)
@@ -62,7 +69,7 @@ namespace DisprzTraining.Controllers
             bool IdIsThere=await _appointmentsBL.RemoveAppointments(id);
             if (IdIsThere==true)
             {
-                     return Ok(IdIsThere);
+                     return NoContent();
             }
             else
             {
@@ -75,6 +82,7 @@ namespace DisprzTraining.Controllers
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<ActionResult> Update([FromBody]Appointment data)
         {
+            try{
             bool updated=await _appointmentsBL.UpdateAppointments(data);
             if(updated==true)
             {
@@ -82,7 +90,12 @@ namespace DisprzTraining.Controllers
             }
             else
             {
-            return Conflict();
+            return Conflict("Meeting is already assigned");
+            }
+            }
+            catch(Exception e)
+            {
+                return Conflict(e.Message);
             }
         }
 

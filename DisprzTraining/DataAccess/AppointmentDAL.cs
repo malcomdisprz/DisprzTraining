@@ -27,8 +27,8 @@ namespace DisprzTraining.DataAccess
 
         public async Task<bool> AddAppointmentAsync(Appointment appointment)
         {
-            var exist = allAppointments.Any(x => (appointment.startDate >= x.startDate && appointment.startDate <= x.endDate) ||
-                                                 (appointment.endDate >= x.startDate && appointment.endDate <= x.endDate) ||
+            var exist = allAppointments.Any(x => (appointment.startDate > x.startDate && appointment.startDate < x.endDate) ||
+                                                 (appointment.endDate > x.startDate && appointment.endDate < x.endDate) ||
                                                  (appointment.startDate <= x.startDate && appointment.endDate >= x.endDate)
                                             );
             if (!exist)
@@ -50,22 +50,22 @@ namespace DisprzTraining.DataAccess
             return await Task.FromResult(false);
         }
 
-        public async Task<bool> UpdateAppointmentAsync(Guid id, PutItemDto putItemDto)
+        public async Task<bool> UpdateAppointmentAsync(ItemDto putItemDto)
         {
-            var exist = allAppointments.Any(x => x.id != id &&
-                                                 ((putItemDto.startDate >= x.startDate && putItemDto.startDate <= x.endDate) ||
-                                                 (putItemDto.endDate >= x.startDate && putItemDto.endDate <= x.endDate) ||
+            var exist = allAppointments.Any(x => x.id != putItemDto.id &&
+                                                 ((putItemDto.startDate > x.startDate && putItemDto.startDate < x.endDate) ||
+                                                 (putItemDto.endDate > x.startDate && putItemDto.endDate < x.endDate) ||
                                                  (putItemDto.startDate <= x.startDate && putItemDto.endDate >= x.endDate))
                                             );
             if (exist)
             {
-                return false;
+                return await Task.FromResult(false);
             }
-            var appointmentToUpdate = allAppointments.Where(x => x.id == id).SingleOrDefault();
+            var appointmentToUpdate = allAppointments.Where(x => x.id == putItemDto.id).SingleOrDefault();
             appointmentToUpdate.startDate = putItemDto.startDate;
             appointmentToUpdate.endDate = putItemDto.endDate;
             appointmentToUpdate.appointment = putItemDto.appointment;
-            return true;
+            return await Task.FromResult(true);
         }
     }
 }

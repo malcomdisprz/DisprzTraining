@@ -61,9 +61,9 @@ namespace DisprzTraining.Business
             return false;
         }
 
-        public async Task<bool> UpdateAppointmentAsync(Guid id, PutItemDto putItemDto)
+        public async Task<bool> UpdateAppointmentAsync(ItemDto putItemDto)
         {
-            var check = await _appointmentDAL.UpdateAppointmentAsync(id, putItemDto);
+            var check = await _appointmentDAL.UpdateAppointmentAsync(putItemDto);
             if (check)
             {
                 return true;

@@ -117,7 +117,7 @@ namespace DisprzTraining.Tests.Systems.Buisness
         public async Task AddAppointmentAsync_withValidAppointmentToAdd_returnAddedAppointment()
         {
             // Given
-            ItemDto check = singleAppointment.AsDto();
+            // ItemDto check = singleAppointment.AsDto();
             mockAppointmentDAL.Setup(service => service.AddAppointmentAsync(It.IsAny<Appointment>())).Returns(Task.FromResult<bool>(true));
             var sut = new AppointmentBL(mockAppointmentDAL.Object);
 
@@ -126,6 +126,35 @@ namespace DisprzTraining.Tests.Systems.Buisness
 
             // Then
             res.Should().NotBeNull();
+        }
+
+        [Fact]
+        public async Task UpdateAppointmentAsync_withInvalidId_returnFalse()
+        {
+            //Given
+            ItemDto check = singleAppointment.AsDto();
+            mockAppointmentDAL.Setup(service => service.UpdateAppointmentAsync(It.IsAny<ItemDto>())).ReturnsAsync(false);
+            var sut = new AppointmentBL(mockAppointmentDAL.Object);
+
+            //When
+            var res = await sut.UpdateAppointmentAsync(check);
+
+            //Then
+            res.Should().BeFalse();
+        }
+        [Fact]
+        public async Task UpdateAppointmentAsync_withValidId_returnTrue()
+        {
+            //Given
+            ItemDto check = singleAppointment.AsDto();
+            mockAppointmentDAL.Setup(service => service.UpdateAppointmentAsync(It.IsAny<ItemDto>())).ReturnsAsync(true);
+            var sut = new AppointmentBL(mockAppointmentDAL.Object);
+
+            //When
+            var res = await sut.UpdateAppointmentAsync(check);
+
+            //Then
+            res.Should().BeTrue();
         }
     }
 }

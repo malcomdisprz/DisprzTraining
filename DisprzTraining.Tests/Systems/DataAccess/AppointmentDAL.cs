@@ -1,4 +1,5 @@
 using DisprzTraining.DataAccess;
+using DisprzTraining.Dtos;
 using DisprzTraining.Models;
 using FluentAssertions;
 
@@ -121,6 +122,35 @@ namespace DisprzTraining.Tests.Systems.DataAccess
 
             //Assert
             Assert.Equal(true, res);
+        }
+
+        [Fact]
+        public async Task UpdateAppointmentAsync_withoutConflict_ReturnsTrue()
+        {
+            //Arrange
+            ItemDto check = AppointmentDAL.allAppointments[0].AsDto();
+            var sut = new AppointmentDAL();
+
+            //Act
+            var res = await sut.UpdateAppointmentAsync(check);
+
+            //Assert
+            Assert.Equal(true, res);
+        }
+
+        [Fact]
+        public async Task UpdateAppointmentAsync_withConflict_ReturnsFalse()
+        {
+            //Arrange
+            ItemDto check = new ItemDto(AppointmentDAL.allAppointments[1].id, new DateTime(2023,1,1,6,10,0), new DateTime(2023,1,1,7,30,0), "Town");
+
+            var sut = new AppointmentDAL();
+
+            //Act
+            var res = await sut.UpdateAppointmentAsync(check);
+
+            //Assert
+            Assert.Equal(false, res);
         }
     }
 }

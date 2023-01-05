@@ -9,6 +9,6 @@ namespace DisprzTraining.DataAccess
         Task<List<Appointment>> GetAppointmentsByDateAsync(DateTime date);
         Task<bool> AddAppointmentAsync(Appointment appointment);
         Task<bool> DeleteAppointmentAsync(Guid id);
-        Task<bool> UpdateAppointmentAsync(Guid id, PutItemDto putItemDto);
+        Task<bool> UpdateAppointmentAsync(ItemDto putItemDto);
     }
 }

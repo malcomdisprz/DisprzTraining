@@ -168,5 +168,58 @@ namespace DisprzTraining.Tests.Systems.Controller
             /* Assert */
             res.Should().BeOfType<NotFoundResult>();
         }
+
+
+
+        [Fact]
+        public async Task UpdateAppointmentAsync_withInvalidTime_ReturnBadRequest()
+        {
+            /* Arrange */
+            var itemId = Guid.NewGuid();
+            ItemDto AppointmentToUpdate = new ItemDto(itemId, new DateTime(2022, 12, 22, 8, 0, 0), new DateTime(2022, 12, 22, 8, 0, 0), "test");
+
+            var sut = new AppointmentsController(mockAppointmentBL.Object);
+            /* Act */
+            var res = await sut.UpdateAppointmentAsync(AppointmentToUpdate);
+
+            /* Assert */
+            res.Should().BeOfType<BadRequestObjectResult>();
+        }
+
+        [Fact]
+        public async Task UpdateAppointmentAsync_withConflictTime_ReturnConflict()
+        {
+            /* Arrange */
+            var itemId = Guid.NewGuid();
+            ItemDto AppointmentToUpdate = new ItemDto(itemId, new DateTime(2022, 12, 22, 8, 0, 0), new DateTime(2022, 12, 22, 9, 0, 0), "test");
+
+            mockAppointmentBL.Setup(service => service.UpdateAppointmentAsync(It.IsAny<ItemDto>()))
+               .ReturnsAsync(false);
+            var sut = new AppointmentsController(mockAppointmentBL.Object);
+
+            /* Act */
+            var res = await sut.UpdateAppointmentAsync(AppointmentToUpdate);
+
+            /* Assert */
+            res.Should().BeOfType<ConflictResult>();
+        }
+
+        [Fact]
+        public async Task UpdateAppointmentAsync_withValidAppointment_ReturnOk()
+        {
+            /* Arrange */
+            var itemId = Guid.NewGuid();
+            ItemDto AppointmentToUpdate = new ItemDto(itemId, new DateTime(2022, 12, 22, 8, 0, 0), new DateTime(2022, 12, 22, 9, 0, 0), "test");
+
+            mockAppointmentBL.Setup(service => service.UpdateAppointmentAsync(It.IsAny<ItemDto>()))
+               .ReturnsAsync(true);
+            var sut = new AppointmentsController(mockAppointmentBL.Object);
+
+            /* Act */
+            var res = await sut.UpdateAppointmentAsync(AppointmentToUpdate);
+
+            /* Assert */
+            res.Should().BeOfType<OkResult>();
+        }
     }
 }

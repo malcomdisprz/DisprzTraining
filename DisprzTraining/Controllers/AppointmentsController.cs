@@ -62,31 +62,20 @@ namespace DisprzTraining.Controllers
             return res ? NoContent() : NotFound();
         }
 
-        [HttpPut("appointments/{id}")]
-        public async Task<ActionResult> UpdateAppointmentAsync(Guid id, PutItemDto putItemDto)
+        [HttpPut("appointments")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        public async Task<ActionResult> UpdateAppointmentAsync(ItemDto putItemDto)
         {
-            try
+            if (putItemDto.startDate >= putItemDto.endDate)
             {
-                var appointmentToUpdate = await _appointmentBL.GetAppointmentByIdAsync(id);
-
-                if (appointmentToUpdate == null)
-                    return NotFound($"Employee with Id = {id} not found");
-
-                if (putItemDto.startDate >= putItemDto.endDate)
-                {
-                    return BadRequest("Invalid Time");
-                }
-
-                var res = await _appointmentBL.UpdateAppointmentAsync(id, putItemDto);
-
-                return res ? Ok() : Conflict();
-
+                return BadRequest("Invalid Time");
             }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    "Error updating data");
-            }
+
+            var res = await _appointmentBL.UpdateAppointmentAsync(putItemDto);
+
+            return res ? Ok() : Conflict();
         }
 
         //design - GET /api/appointments

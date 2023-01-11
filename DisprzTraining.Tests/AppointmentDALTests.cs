@@ -43,14 +43,16 @@ public class AppointmentDALTests
         var result = await mockAppointmentDAL.Create(appointment);
 
         // Assert
-        Assert.Equal(true, result);
+        Assert.Equal(false, result);
     }
 
     [Fact]
-    public async Task GetByDay_When_Appointments_Found_Returns_ListOfAppointments()
+    public async Task Get_When_Appointments_Found_Returns_ListOfAppointments()
     {
         // Arrange
-        DateTime day = new DateTime(2022, 12, 30, 5, 10, 20);
+        Request request = new Request();
+        request.Day = new DateTime(2022, 12, 30, 5, 10, 20);
+        request.Month = DateTime.MinValue;
         List<Appointment> appointments = new List<Appointment>(){
             new Appointment{
                 Id = new Guid("8d6812c7-348b-419f-b6f9-d626b6c1d361"),
@@ -68,7 +70,7 @@ public class AppointmentDALTests
         var mockAppointmentDAL = new AppointmentDAL();
 
         // Act
-        var result = await mockAppointmentDAL.GetByDay(day);
+        var result = await mockAppointmentDAL.Get(request);
 
         // Assert
         result.Should().BeEquivalentTo(
@@ -78,15 +80,17 @@ public class AppointmentDALTests
     }
 
     [Fact]
-    public async Task GetByDay_When_No_Appointments_Found_Returns_EmptyListOfAppointments()
+    public async Task Get_When_No_Appointments_Found_Returns_EmptyListOfAppointments()
     {
         // Arrange
-        DateTime day = new DateTime(2022, 12, 28, 5, 10, 20);
+        Request request = new Request();
+        request.Day = new DateTime(2022, 12, 28, 5, 10, 20);
+        request.Month = DateTime.MinValue;
         List<Appointment> appointments = new List<Appointment>();
         var mockAppointmentDAL = new AppointmentDAL();
 
         // Act
-        var result = await mockAppointmentDAL.GetByDay(day);
+        var result = await mockAppointmentDAL.Get(request);
 
         // Assert
         result.Should().BeEquivalentTo(

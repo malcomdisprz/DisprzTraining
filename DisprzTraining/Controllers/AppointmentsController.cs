@@ -2,7 +2,6 @@
 using DisprzTraining.Models;
 using Microsoft.AspNetCore.Mvc;
 
-
 namespace DisprzTraining.Controllers
 {
     [Route("api")]
@@ -15,35 +14,34 @@ namespace DisprzTraining.Controllers
             _appointmentBL = appointmentBL;
         }
 
-
         /// <summary>
-        /// Get all the appointments in a day.
+        /// Return a list of appointments.
         /// </summary>
         ///<remarks>
         /// Sample request:
         ///
         ///      day : "2023-01-23"(yyyy-mm-dd)
+        ///      month : "2023-01-23"(yyyy-mm-dd)
         ///
         /// </remarks>
-        /// <response code="200">Returns list of appointment</response>
+        /// <response code="200"> Returns a Dictionary data with key as integer and value as a list of appointments </response>
         /// <response code="404">No appointments found</response>
-        //- GET /api/appointments/day
 
-        [HttpGet("appointments/day")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<AppointmentDto>))]
-        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(List<>))]
+        //- GET /api/appointments
 
-        public async Task<IActionResult> GetByDay(DateTime day)
+        [HttpGet("appointments")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IDictionary<int, List<AppointmentDto>>))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(IDictionary<int, List<Array>>))]
+
+        public async Task<IActionResult> Get([FromQuery] Request request)
         {
-            var appointments = await _appointmentBL.GetByDayAsync(day);
-            return appointments.Any() ? Ok(appointments) : NotFound(new List<AppointmentDto>());
+            var appointments = await _appointmentBL.GetAsync(request);
+            return appointments.Count != 0 ? Ok(appointments) : NotFound();
         }
-
 
         /// <summary>
         /// Creates a new appointment.
         /// </summary>
-        /// <param name="appointmentDto"></param>
         /// <remarks>
         /// Sample request:
         ///
@@ -58,22 +56,21 @@ namespace DisprzTraining.Controllers
         /// <response code="409">If there is a conflict</response>
 
         //- POST /api/appointments
+
         [HttpPost("appointments")]
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(AppointmentDto))]
-        // [ProducesResponseType(StatusCodes.Status409Conflict, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status409Conflict, Type = typeof(AppointmentDto))]
 
         public async Task<IActionResult> Post(CreateAppointmentDto appointmentDto)
         {
             if (appointmentDto.StartTime >= appointmentDto.EndTime) return BadRequest();
             var newAppointment = await _appointmentBL.CreateAsync(appointmentDto);
-            return newAppointment == null ? Conflict(new { message = $"There is a conflict"}) : CreatedAtAction(nameof(GetByDay), new { Id = newAppointment.Id }, newAppointment);
+            return newAppointment == null ? Conflict() : CreatedAtAction(nameof(Get), new { Id = newAppointment.Id }, newAppointment);
         }
-
 
         /// <summary>
         /// Updates an existing appointment.
         /// </summary>
-        /// <param name="appointmentDto"></param>
         /// <remarks>
         /// Sample request:
         ///
@@ -87,7 +84,7 @@ namespace DisprzTraining.Controllers
         /// </remarks>
         /// <response code="201">Returns the updated appointment</response>
         /// <response code="409">If there is a conflict</response>
-
+        //- PUT /api/appointments
         [HttpPut("appointments")]
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(AppointmentDto))]
         [ProducesResponseType(StatusCodes.Status409Conflict, Type = typeof(AppointmentDto))]
@@ -96,14 +93,12 @@ namespace DisprzTraining.Controllers
         {
             if (appointmentDto.StartTime >= appointmentDto.EndTime) return BadRequest();
             var newAppointment = await _appointmentBL.UpdateAsync(appointmentDto);
-            return newAppointment == null ? Conflict() : CreatedAtAction(nameof(GetByDay), new { Id = newAppointment.Id }, newAppointment);
+            return newAppointment == null ? Conflict() : CreatedAtAction(nameof(Get), new { Id = newAppointment.Id }, newAppointment);
         }
 
         /// <summary>
-        /// Deletes a specific appointment.
+        /// Deletes a existing appointment.
         /// </summary>
-        /// <param name="Id"></param>
-        /// <returns></returns>
         /// <remarks>
         /// Sample request:
         ///
@@ -112,16 +107,15 @@ namespace DisprzTraining.Controllers
         /// </remarks>
         /// <response code="204">Deletes an appointment successfully</response>
         /// <response code="404">Appointment is not found</response>
-        // DELETE /api/appointments/{Id}
+        //- DELETE /api/appointments/{Id}
         [HttpDelete("appointments/{Id}")]
-        // [ProducesResponseType(StatusCodes.Status204NoContent, Type = typeof(AppointmentDto))]
+        [ProducesResponseType(StatusCodes.Status204NoContent, Type = typeof(AppointmentDto))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(List<>))]
 
         public async Task<IActionResult> Delete(Guid Id)
         {
             var boo = await _appointmentBL.Delete(Id);
-            // return boo ? StatusCode(204, "Appointment deleted") : NotFound(new AppointmentDto());
-            return boo ? StatusCode(204, "Appointment deleted") : NotFound(new AppointmentDto());
+            return boo ? NoContent() : NotFound(new AppointmentDto());
         }
     }
 }

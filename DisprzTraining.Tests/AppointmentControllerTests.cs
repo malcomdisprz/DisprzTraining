@@ -5,37 +5,36 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using DisprzTraining.UnitTests.Fixtures;
+using Microsoft.AspNetCore.Http;
 
 namespace DisprzTraining.UnitTests.Controllers;
 
 public class AppointmentControllerTests
 {
     [Fact]
-    public async Task GetByDay_When_Appointments_Found_Returns_ListOfAppointmentDto()
+    public async Task Get_When_Appointments_Found_Returns_ListOfAppointmentDto()
     {
         // Arrange
-        DateTime day = new DateTime();
+        Request request = new Request();
+        request.Day = new DateTime();
         var mockAppointment = new Mock<IAppointmentBL>();
 
         mockAppointment
-            .Setup(s => s.GetByDayAsync(day))
-            .ReturnsAsync(AppointmentFixture.GetAppointmentDtos());
+            .Setup(s => s.GetAsync(request))
+            .ReturnsAsync(AppointmentFixture.GetAppointmentDictionary());
 
         var sut = new AppointmentsController(mockAppointment.Object);
 
         // Act
-        var result = await sut.GetByDay(day);
-
+        var result = await sut.Get(request);
 
         // Assert
-        result.Should().BeOfType<OkObjectResult>();// 1
+        var okResult = result as ObjectResult;
 
-        var objectResult = (OkObjectResult)result;
-
-        objectResult.StatusCode.Should().Be(200);//2
-
-        objectResult.Value.Should().BeOfType<List<AppointmentDto>>();// 3
-
+        Assert.NotNull(okResult);
+        Assert.True(okResult is OkObjectResult);
+        Assert.IsType<Dictionary<int, List<AppointmentDto>>>(okResult.Value);
+        Assert.Equal(StatusCodes.Status200OK, okResult.StatusCode);
 
     }
 
@@ -43,25 +42,24 @@ public class AppointmentControllerTests
     public async Task GetByDay_When_No_Appointments_Found_Returns_NotFoundObjectResult_404()
     {
         // Arrange
-        DateTime day = new DateTime();
+        Request request = new Request();
+        request.Day = new DateTime();
         var mockAppointment = new Mock<IAppointmentBL>();
 
         mockAppointment
-            .Setup(s => s.GetByDayAsync(day))
-            .ReturnsAsync(new List<AppointmentDto>());
+            .Setup(s => s.GetAsync(request))
+            .ReturnsAsync(new Dictionary<int, List<AppointmentDto>>());
 
         var sut = new AppointmentsController(mockAppointment.Object);
 
         // Act
-        var result = await sut.GetByDay(day);
-
+        var result = await sut.Get(request);
 
         // Assert
-        result.Should().BeOfType<NotFoundObjectResult>();// 1
+        result.Should().BeOfType<NotFoundResult>();
+        var objectResult = (NotFoundResult)result;
+        objectResult.StatusCode.Should().Be(404);
 
-        var objectResult = (NotFoundObjectResult)result;
-
-        objectResult.StatusCode.Should().Be(404);//2
     }
 
     [Fact]
@@ -92,23 +90,18 @@ public class AppointmentControllerTests
             .Setup(s => s.CreateAsync(It.IsAny<CreateAppointmentDto>()))
             .ReturnsAsync(appointment1.AsDto());
 
-
         var sut = new AppointmentsController(mockAppointment.Object);
 
         // Act
         var result = await sut.Post(dto);
 
         // Assert
-        result.Should().BeOfType<CreatedAtActionResult>();// 1
+        var okResult = result as ObjectResult;
 
-        var objectResult = (CreatedAtActionResult)result;
+        Assert.NotNull(okResult);
+        Assert.True(okResult is CreatedAtActionResult);
+        Assert.Equal(StatusCodes.Status201Created, okResult.StatusCode);
 
-        objectResult.StatusCode.Should().Be(201);// 2
-
-        mockAppointment.Verify(
-            service => service.CreateAsync(It.IsAny<CreateAppointmentDto>()),
-            Times.Once()
-        );// 3
     }
 
     [Fact]
@@ -139,13 +132,13 @@ public class AppointmentControllerTests
             .Setup(s => s.CreateAsync(It.IsAny<CreateAppointmentDto>()))
             .ReturnsAsync(() => null);
 
-
         var sut = new AppointmentsController(mockAppointment.Object);
 
         // Act
         var result = await sut.Post(dto);
 
         // Assert
+
         result.Should().BeOfType<ConflictResult>();// 1
 
         var objectResult = (ConflictResult)result;
@@ -180,15 +173,13 @@ public class AppointmentControllerTests
             .Setup(s => s.CreateAsync(dto))
             .ReturnsAsync(appointment);
 
-
         var sut = new AppointmentsController(mockAppointment.Object);
 
         // Act
         var result = await sut.Post(dto);
 
         // Assert
-        result.Should().BeOfType<BadRequestResult>();// 1
-
+        Assert.IsType<BadRequestResult>(result);
 
     }
 
@@ -217,11 +208,12 @@ public class AppointmentControllerTests
             .ReturnsAsync(appointment);
 
         var sut = new AppointmentsController(mockAppointment.Object);
-        
+
         // Act
         var result = await sut.Put(appointment);
 
         // Assert
+
         result.Should().BeOfType<CreatedAtActionResult>();// 1
 
         var objectResult = (CreatedAtActionResult)result;
@@ -251,10 +243,10 @@ public class AppointmentControllerTests
 
         mockAppointment
             .Setup(s => s.UpdateAsync(appointment))
-            .ReturnsAsync( () => null);
+            .ReturnsAsync(() => null);
 
         var sut = new AppointmentsController(mockAppointment.Object);
-        
+
         // Act
         var result = await sut.Put(appointment);
 

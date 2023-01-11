@@ -50,8 +50,10 @@ namespace DisprzTraining.DataAccess
 
             var check = newAppointments.Any(
                 s => (
-                        ((appointment.StartTime > s.StartTime) && (appointment.StartTime < s.EndTime))
-                        || ((appointment.EndTime > s.StartTime) && (appointment.EndTime < s.EndTime))
+                        ((s.StartTime >= appointment.StartTime) && (s.StartTime <= appointment.EndTime))
+                        || ((s.EndTime >= appointment.StartTime) && (s.EndTime <= appointment.EndTime))
+                        || ((appointment.StartTime >= s.StartTime) && (appointment.StartTime <= s.EndTime))
+                        || ((appointment.EndTime >= s.StartTime) && (appointment.EndTime <= s.EndTime))
                     )
                 );
 
@@ -69,15 +71,17 @@ namespace DisprzTraining.DataAccess
 
         public async Task<bool> Update(Appointment appointment)
         {
-            var appointment1 = appointments.Find(s => s.Id == appointment.Id);
-            appointments.Remove(appointment1);
-            var boo = await Create(appointment);
-            if(boo == true){
-               return true;
+            var existingAppointment = appointments.Find(s => s.Id == appointment.Id);
+            appointments.Remove(existingAppointment);
+            var check = await Create(appointment);
+            if (check == true)
+            {
+                return true;
             }
-            else{
-             appointments.Add(appointment1);
-             return false;  
+            else
+            {
+                appointments.Add(existingAppointment);
+                return false;
             }
         }
 
@@ -92,10 +96,29 @@ namespace DisprzTraining.DataAccess
             return Task.FromResult(true);
         }
 
-        public Task<List<Appointment>> GetByDay(DateTime day)
+        public Task<List<Appointment>> Get(Request request)
         {
-            var newAppointments = appointments.Where(s => (s.StartTime.Year == day.Year) && (s.StartTime.Month == day.Month) && (s.StartTime.Day == day.Day)).ToList();
-            return Task.FromResult(newAppointments);
+            if (request.Day != DateTime.MinValue && request.Month == DateTime.MinValue)
+            {
+                int year = request.Day.ToLocalTime().Year;
+                int month = request.Day.ToLocalTime().Month;
+                int day = request.Day.ToLocalTime().Day;
+
+                var newAppointments = appointments.Where(s => (s.StartTime.Year == year) && (s.StartTime.Month == month) && (s.StartTime.Day == day)).ToList();
+                return Task.FromResult(newAppointments);
+            }
+            else if (request.Day == DateTime.MinValue && request.Month != DateTime.MinValue)
+            {
+                int year = request.Month.ToLocalTime().Year;
+                int month = request.Month.ToLocalTime().Month;
+                
+                var newAppointments = appointments.Where(s => (s.StartTime.Year == year) && (s.StartTime.Month == month)).ToList();
+                return Task.FromResult(newAppointments);
+            }
+            else{
+                return Task.FromResult( new List<Appointment>());
+            }
         }
+
     }
 }

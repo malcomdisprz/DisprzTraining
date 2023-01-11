@@ -10,11 +10,5 @@ public static class Extensions
             StartTime = appointment.StartTime,
             EndTime = appointment.EndTime
         };
-        // return new AppointmentDto(
-        //     appointment.Id,
-        //     appointment.Title,
-        //     appointment.StartTime,
-        //     appointment.EndTime
-        // );
     }
 }

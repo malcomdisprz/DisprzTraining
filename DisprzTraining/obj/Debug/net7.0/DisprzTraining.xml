@@ -4,24 +4,24 @@
         <name>DisprzTraining</name>
     </assembly>
     <members>
-        <member name="M:DisprzTraining.Controllers.AppointmentsController.GetByDay(System.DateTime)">
+        <member name="M:DisprzTraining.Controllers.AppointmentsController.Get(DisprzTraining.Models.Request)">
              <summary>
-             Get all the appointments in a day.
+             Return a list of appointments.
              </summary>
             <remarks>
              Sample request:
             
                   day : "2023-01-23"(yyyy-mm-dd)
+                  month : "2023-01-23"(yyyy-mm-dd)
             
              </remarks>
-             <response code="200">Returns list of appointment</response>
+             <response code="200"> Returns a Dictionary data with key as integer and value as a list of appointments </response>
              <response code="404">No appointments found</response>
         </member>
         <member name="M:DisprzTraining.Controllers.AppointmentsController.Post(DisprzTraining.Models.CreateAppointmentDto)">
              <summary>
              Creates a new appointment.
              </summary>
-             <param name="appointmentDto"></param>
              <remarks>
              Sample request:
             
@@ -39,7 +39,6 @@
              <summary>
              Updates an existing appointment.
              </summary>
-             <param name="appointmentDto"></param>
              <remarks>
              Sample request:
             
@@ -56,10 +55,8 @@
         </member>
         <member name="M:DisprzTraining.Controllers.AppointmentsController.Delete(System.Guid)">
              <summary>
-             Deletes a specific appointment.
+             Deletes a existing appointment.
              </summary>
-             <param name="Id"></param>
-             <returns></returns>
              <remarks>
              Sample request:
             

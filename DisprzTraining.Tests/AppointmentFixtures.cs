@@ -28,8 +28,12 @@ public static class AppointmentFixture
         },
     };
 
+    public static Dictionary<int, List<AppointmentDto>> GetAppointmentDictionary() => new() {
+        {0, GetAppointmentDtos()},
+    };
 
-    public static List<Appointment> GetAppointments() => new() {
+
+public static List<Appointment> GetAppointments() => new() {
         new Appointment()
         {
             Id = new Guid(),

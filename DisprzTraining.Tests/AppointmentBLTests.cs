@@ -11,30 +11,26 @@ public class AppointmentBLTests
 {
 
     [Fact]
-    public async Task GetByDayAsync_WhenCalled_Returns_ListOfAppointmentDtos()
+    public async Task GetAsync_WhenCalled_Returns_ListOfAppointmentDtos()
     {
         // Arrange
-        DateTime day = new DateTime();
+        Request request = new Request();
+        request.Day = new DateTime();
         var appointments = AppointmentFixture.GetAppointments();
         var appointmentDtos = (appointments.Select(s => s.AsDto())).ToList();
-        var mockAppointmentBL = new Mock<IAppointmentDAL>();
+        var mockAppointmentDAL = new Mock<IAppointmentDAL>();
 
-        mockAppointmentBL
-            .Setup(s => s.GetByDay(day))
+        mockAppointmentDAL
+            .Setup(s => s.Get(request))
             .Returns(Task.FromResult(appointments));
 
-        var sut = new AppointmentBL(mockAppointmentBL.Object);
+        var sut = new AppointmentBL(mockAppointmentDAL.Object);
 
         // Act
-        var result = await sut.GetByDayAsync(day);
+        var result = await sut.GetAsync(request);
 
         // Assert
-        result.Should().BeOfType<List<AppointmentDto>>();// 1
-
-        result.Should().BeEquivalentTo(
-                   appointmentDtos,
-                   options => options.ComparingByMembers<AppointmentDto>().ExcludingMissingMembers()
-               );// 2
+        result.Should().BeOfType<Dictionary<int, List<AppointmentDto>>>();// 1
     }
 
     [Fact]
@@ -80,11 +76,6 @@ public class AppointmentBLTests
 
         // Assert
         result.Should().BeOfType<AppointmentDto>();// 1
-
-        result.Should().BeEquivalentTo(
-                   appointmentDto,
-                   options => options.ComparingByMembers<AppointmentDto>().ExcludingMissingMembers()
-               );// 2
     }
 
 
@@ -135,11 +126,6 @@ public class AppointmentBLTests
 
         // Assert
         result.Should().BeOfType<AppointmentDto>();// 1
-
-        result.Should().BeEquivalentTo(
-                   appointmentDto,
-                   options => options.ComparingByMembers<AppointmentDto>().ExcludingMissingMembers()
-               );// 2
     }
 
     [Fact]

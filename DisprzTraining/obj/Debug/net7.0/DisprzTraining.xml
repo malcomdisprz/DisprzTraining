@@ -6,7 +6,7 @@
     <members>
         <member name="M:DisprzTraining.Controllers.AppointmentsController.Get(DisprzTraining.Models.Request)">
              <summary>
-             Return a list of appointments.
+             Return appointments.
              </summary>
             <remarks>
              Sample request:
@@ -63,7 +63,7 @@
                     id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
             
              </remarks>
-             <response code="204">Deletes an appointment successfully</response>
+             <response code="204">Appointment deleted successfully</response>
              <response code="404">Appointment is not found</response>
         </member>
     </members>

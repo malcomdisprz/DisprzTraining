@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DisprzTraining.Controllers
 {
-    [Route("api")]
+    [Route("v1/api")]
     [ApiController]
     public class AppointmentsController : ControllerBase
     {
@@ -15,7 +15,7 @@ namespace DisprzTraining.Controllers
         }
 
         /// <summary>
-        /// Return a list of appointments.
+        /// Return appointments.
         /// </summary>
         ///<remarks>
         /// Sample request:
@@ -33,7 +33,7 @@ namespace DisprzTraining.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IDictionary<int, List<AppointmentDto>>))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(IDictionary<int, List<Array>>))]
 
-        public async Task<IActionResult> Get([FromQuery] Request request)
+        public async Task<ActionResult> Get([FromQuery] Request request)
         {
             var appointments = await _appointmentBL.GetAsync(request);
             return appointments.Count != 0 ? Ok(appointments) : NotFound();
@@ -64,6 +64,11 @@ namespace DisprzTraining.Controllers
         public async Task<IActionResult> Post(CreateAppointmentDto appointmentDto)
         {
             if (appointmentDto.StartTime >= appointmentDto.EndTime) return BadRequest();
+
+            if ((appointmentDto.StartTime.Year != appointmentDto.EndTime.Year)
+            || (appointmentDto.StartTime.Month != appointmentDto.EndTime.Month)
+            || (appointmentDto.StartTime.Day != appointmentDto.EndTime.Day)) return BadRequest();
+
             var newAppointment = await _appointmentBL.CreateAsync(appointmentDto);
             return newAppointment == null ? Conflict() : CreatedAtAction(nameof(Get), new { Id = newAppointment.Id }, newAppointment);
         }
@@ -92,12 +97,15 @@ namespace DisprzTraining.Controllers
         public async Task<IActionResult> Put(AppointmentDto appointmentDto)
         {
             if (appointmentDto.StartTime >= appointmentDto.EndTime) return BadRequest();
+
+            if ((appointmentDto.StartTime.ToLocalTime().Year != appointmentDto.EndTime.ToLocalTime().Year) || (appointmentDto.StartTime.ToLocalTime().Month != appointmentDto.EndTime.ToLocalTime().Month) || (appointmentDto.StartTime.ToLocalTime().Day != appointmentDto.EndTime.ToLocalTime().Day)) return NoContent();
+            
             var newAppointment = await _appointmentBL.UpdateAsync(appointmentDto);
             return newAppointment == null ? Conflict() : CreatedAtAction(nameof(Get), new { Id = newAppointment.Id }, newAppointment);
         }
 
         /// <summary>
-        /// Deletes a existing appointment.
+        /// Deletes an existing appointment.
         /// </summary>
         /// <remarks>
         /// Sample request:
@@ -105,12 +113,12 @@ namespace DisprzTraining.Controllers
         ///        id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
         ///
         /// </remarks>
-        /// <response code="204">Deletes an appointment successfully</response>
+        /// <response code="204">Appointment deleted successfully</response>
         /// <response code="404">Appointment is not found</response>
         //- DELETE /api/appointments/{Id}
         [HttpDelete("appointments/{Id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent, Type = typeof(AppointmentDto))]
-        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(List<>))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(AppointmentDto))]
 
         public async Task<IActionResult> Delete(Guid Id)
         {

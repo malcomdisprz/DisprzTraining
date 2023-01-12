@@ -6,24 +6,25 @@ namespace DisprzTraining.DataAccess
     public class AppointmentDAL : IAppointmentDAL
     {
         public static List<Appointment> allAppointments = new(){
-            new Appointment(){id = Guid.NewGuid(), startDate = new DateTime(2023,1,1,6,10,0), endDate = new DateTime(2023,1,1,6,30,0), appointment = "TownHall"},
-            new Appointment(){id = Guid.NewGuid(), startDate = new DateTime(2023,1,2, 9, 30, 0), endDate = new DateTime(2023,1,2,10,15,0), appointment = "LeaderShip"},
-            new Appointment(){id = Guid.NewGuid(), startDate = new DateTime(2023,1,3, 11, 0, 0), endDate = new DateTime(2023,1,3,11,30,0), appointment = "standup"},
+            new Appointment(){id = Guid.NewGuid(), startDate = new DateTime(2023,2,1,6,10,0), endDate = new DateTime(2023,2,1,6,30,0), appointment = "TownHall"},
+            new Appointment(){id = Guid.NewGuid(), startDate = new DateTime(2023,2,2, 9, 30, 0), endDate = new DateTime(2023,2,2,10,15,0), appointment = "LeaderShip"},
+            new Appointment(){id = Guid.NewGuid(), startDate = new DateTime(2023,2,3, 11, 0, 0), endDate = new DateTime(2023,2,3,11,30,0), appointment = "standup"},
 
         };
 
-
-        public async Task<Appointment> GetAppointmentByIdAsync(Guid id)
-        {
-            var item = allAppointments.Where(x => x.id == id).SingleOrDefault();
-            return await Task.FromResult(item);
-        }
 
         public async Task<List<Appointment>> GetAppointmentsByDateAsync(DateTime date)
         {
             var item = allAppointments.Where(x => x.startDate.Day == date.Day && x.startDate.Month == date.Month && x.startDate.Year == date.Year).ToList();
             return await Task.FromResult(item);
         }
+
+        public async Task<List<Appointment>> GetAppointmentsByMonthAsync(DateTime date)
+        {
+            var item = allAppointments.Where(x => x.startDate.Month == date.Month && x.startDate.Year == date.Year).ToList();
+            return await Task.FromResult(item);
+        }
+
 
         public async Task<bool> AddAppointmentAsync(Appointment appointment)
         {
@@ -34,17 +35,6 @@ namespace DisprzTraining.DataAccess
             if (!exist)
             {
                 allAppointments.Add(appointment);
-                return await Task.FromResult(true);
-            }
-            return await Task.FromResult(false);
-        }
-
-        public async Task<bool> DeleteAppointmentAsync(Guid id)
-        {
-            var item = allAppointments.Where(x => x.id == id).SingleOrDefault();
-            if (item != null)
-            {
-                allAppointments.Remove(item);
                 return await Task.FromResult(true);
             }
             return await Task.FromResult(false);
@@ -67,6 +57,19 @@ namespace DisprzTraining.DataAccess
             appointmentToUpdate.appointment = putItemDto.appointment;
             return await Task.FromResult(true);
         }
+
+        public async Task<bool> DeleteAppointmentAsync(Guid id)
+        {
+            var item = allAppointments.Where(x => x.id == id).SingleOrDefault();
+            if (item != null)
+            {
+                allAppointments.Remove(item);
+                return await Task.FromResult(true);
+            }
+            return await Task.FromResult(false);
+        }
+
+
     }
 }
 

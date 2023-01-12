@@ -14,33 +14,6 @@ namespace DisprzTraining.Tests.Systems.Buisness
         private Appointment singleAppointment = new Appointment() { id = Guid.NewGuid(), startDate = new DateTime(2022, 12, 21, 9, 0, 0), endDate = new DateTime(2022, 12, 21, 10, 0, 0), appointment = "BLTest" };
         private PostItemDto postItemDto = new PostItemDto(new DateTime(2022, 12, 21, 9, 0, 0), new DateTime(2022, 12, 21, 10, 0, 0), "TownHall");
 
-        [Fact]
-        public async Task GetAppointmentByIdAsync_withExistingId_ReturnAppointment()
-        {
-            // Given
-            mockAppointmentDAL.Setup(service => service.GetAppointmentByIdAsync(It.IsAny<Guid>())).Returns(Task.FromResult<Appointment>(singleAppointment));
-            var sut = new AppointmentBL(mockAppointmentDAL.Object);
-
-            // When
-            var res = await sut.GetAppointmentByIdAsync(singleAppointment.id);
-
-            // Then
-            res.Should().BeSameAs(singleAppointment);
-        }
-
-        [Fact]
-        public async Task GetAppointmentByIdAsync_withUnExistingId_ReturnNull()
-        {
-            // Given
-            mockAppointmentDAL.Setup(service => service.GetAppointmentByIdAsync(It.IsAny<Guid>())).Returns(Task.FromResult<Appointment>(null));
-            var sut = new AppointmentBL(mockAppointmentDAL.Object);
-
-            // When
-            var res = await sut.GetAppointmentByIdAsync(singleAppointment.id);
-
-            // Then
-            res.Should().BeNull();
-        }
 
         [Fact]
         public async Task GetAppointmentByDateAsync_withValidDate_ReturnListOfAppointment()
@@ -67,6 +40,36 @@ namespace DisprzTraining.Tests.Systems.Buisness
 
             // When
             var res = await sut.GetAppointmentsByDateAsync(d);
+
+            // Then
+            res.Should().BeNull();
+        }
+        
+        [Fact]
+        public async Task GetAppointmentByMonthAsync_withValidMonth_ReturnListOfAppointment()
+        {
+            // Given
+            DateTime d = new DateTime();
+            mockAppointmentDAL.Setup(service => service.GetAppointmentsByMonthAsync(It.IsAny<DateTime>())).ReturnsAsync(AppointmentsFixture.GetTestAppointments());
+            var sut = new AppointmentBL(mockAppointmentDAL.Object);
+
+            // When
+            var res = await sut.GetAppointmentsByMonthAsync(d);
+
+            // Then
+            res.Should().BeOfType<List<Appointment>>();
+        }
+
+        [Fact]
+        public async Task GetAppointmentByMonthAsync_withInValidDate_ReturnNull()
+        {
+            // Given
+            DateTime d = new DateTime();
+            mockAppointmentDAL.Setup(service => service.GetAppointmentsByMonthAsync(d)).ReturnsAsync(() => null);
+            var sut = new AppointmentBL(mockAppointmentDAL.Object);
+
+            // When
+            var res = await sut.GetAppointmentsByMonthAsync(d);
 
             // Then
             res.Should().BeNull();

@@ -13,18 +13,19 @@ namespace DisprzTraining.Business
         }
 
 
-        public async Task<Appointment> GetAppointmentByIdAsync(Guid id)
+        public async Task<List<Appointment>> GetAppointmentsByDateAsync(DateTime date)
         {
-            var res = await _appointmentDAL.GetAppointmentByIdAsync(id);
+            var res = await _appointmentDAL.GetAppointmentsByDateAsync(date);
             if (res != null)
             {
                 return res;
             }
             return null;
         }
-        public async Task<List<Appointment>> GetAppointmentsByDateAsync(DateTime date)
+
+        public async Task<List<Appointment>> GetAppointmentsByMonthAsync(DateTime date)
         {
-            var res = await _appointmentDAL.GetAppointmentsByDateAsync(date);
+            var res = await _appointmentDAL.GetAppointmentsByMonthAsync(date);
             if (res != null)
             {
                 return res;
@@ -49,7 +50,15 @@ namespace DisprzTraining.Business
             return null;
         }
 
-
+        public async Task<bool> UpdateAppointmentAsync(ItemDto putItemDto)
+        {
+            var check = await _appointmentDAL.UpdateAppointmentAsync(putItemDto);
+            if (check)
+            {
+                return true;
+            }
+            return false;
+        }
 
         public async Task<bool> DeleteAppointmentAsync(Guid id)
         {
@@ -61,15 +70,9 @@ namespace DisprzTraining.Business
             return false;
         }
 
-        public async Task<bool> UpdateAppointmentAsync(ItemDto putItemDto)
-        {
-            var check = await _appointmentDAL.UpdateAppointmentAsync(putItemDto);
-            if (check)
-            {
-                return true;
-            }
-            return false;
-        }
+
+
+
     }
 }
 

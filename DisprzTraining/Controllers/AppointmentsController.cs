@@ -7,7 +7,7 @@ namespace DisprzTraining.Controllers
 {
     [Route("api")]
     [ApiController]
-    public class AppointmentsController : ControllerBase
+    public class AppointmentsController : Controller
     {
         private readonly IAppointmentBL _appointmentBL;
         public AppointmentsController(IAppointmentBL appointmentBL)
@@ -15,15 +15,6 @@ namespace DisprzTraining.Controllers
             _appointmentBL = appointmentBL;
         }
 
-        [HttpGet("appointments/{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult> GetAppointmentByIdAsync(Guid id)
-        {
-            var item = (await _appointmentBL.GetAppointmentByIdAsync(id));
-
-            return item != null ? Ok(item) : NotFound();
-        }
 
         [HttpGet("appointments/date")]
         [ActionName(nameof(GetAppointmentsByDateAsync))]
@@ -37,6 +28,18 @@ namespace DisprzTraining.Controllers
             return item.Any() ? Ok(item) : NotFound(notFound);
         }
 
+        [HttpGet("appointments/month")]
+        [ProducesResponseType(typeof(ItemDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult> GetAppointmentsByMonthAsync(DateTime month)
+        {
+            var item = (await _appointmentBL.GetAppointmentsByMonthAsync(month))
+                           .Select(item => item.AsDto()).ToList();
+            List<Appointment> notFound = new();
+            return item.Any() ? Ok(item) : NotFound(notFound);
+        }
+
+
 
         [HttpPost("appointments")]
         [ProducesResponseType(typeof(ItemDto), StatusCodes.Status201Created)]
@@ -44,12 +47,28 @@ namespace DisprzTraining.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> AddAppointmentAsync(PostItemDto postItemDto)
         {
-            if (postItemDto.startDate >= postItemDto.endDate)
+            if ((postItemDto.startDate >= postItemDto.endDate) || (postItemDto.startDate < DateTime.Now))
             {
                 return BadRequest("Invalid Time");
             }
             var res = (await _appointmentBL.AddAppointmentAsync(postItemDto));
             return res != null ? CreatedAtAction(nameof(GetAppointmentsByDateAsync), new { id = res.id }, res) : Conflict();
+        }
+
+        [HttpPut("appointments")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        public async Task<ActionResult> UpdateAppointmentAsync(ItemDto putItemDto)
+        {
+            if (putItemDto.startDate >= putItemDto.endDate || (putItemDto.startDate < DateTime.Now))
+            {
+                return BadRequest("Invalid time");
+            }
+
+            var res = await _appointmentBL.UpdateAppointmentAsync(putItemDto);
+
+            return res ? Ok() : Conflict();
         }
 
         [HttpDelete("appointments/{id}")]
@@ -62,21 +81,7 @@ namespace DisprzTraining.Controllers
             return res ? NoContent() : NotFound();
         }
 
-        [HttpPut("appointments")]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status409Conflict)]
-        public async Task<ActionResult> UpdateAppointmentAsync(ItemDto putItemDto)
-        {
-            if (putItemDto.startDate >= putItemDto.endDate)
-            {
-                return BadRequest("Invalid Time");
-            }
-
-            var res = await _appointmentBL.UpdateAppointmentAsync(putItemDto);
-
-            return res ? Ok() : Conflict();
-        }
+       
 
         //design - GET /api/appointments
         //- POST /api/appointments

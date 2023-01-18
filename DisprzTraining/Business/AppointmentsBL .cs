@@ -1,10 +1,12 @@
 using DisprzTraining.Models;
 using DisprzTraining.DataAccess;
 using DisprzTraining.Data;
-
+using System.Globalization;
+using Newtonsoft.Json;
+using DisprzTraining.CustomErrorCodes;
 namespace DisprzTraining.Business
 {
-    public class AppointmentsBL:IAppointmentsBL
+    public class AppointmentsBL : IAppointmentsBL
     {
         private readonly IAppointmentsDAL _appointmentsDAL;
 
@@ -13,103 +15,85 @@ namespace DisprzTraining.Business
             _appointmentsDAL = appointmentsDAL;
         }
 
-        public async Task<bool> CreateNewAppointment(AddNewAppointment data)
+        public bool CreateNewAppointment(AddNewAppointment data)
         {
-            if(data.StartTime==data.EndTime)
+            if (data.StartTime == data.EndTime)
             {
-                throw new Exception("Cannot add a event as time clashes");
+                throw new Exception(JsonConvert.SerializeObject(CustomErrorCodeMessages.startAndEndTimeAreSame));
             }
-            
-            if( data.EndTime<data.StartTime)
+            if (data.EndTime < data.StartTime)
             {
-                throw new Exception("Cannot initiate event as StartTime is Greater than endTime");
+                throw new Exception(JsonConvert.SerializeObject(CustomErrorCodeMessages.startTimeGreaterThanEndTime));
             }
-            
-            bool NoConflict=await CheckConflict(data);
-            if(NoConflict==true)
+            int comparedValue = DateTime.Compare(data.StartTime, DateTime.Now);
+            if (comparedValue == -1)
             {
-                return (await _appointmentsDAL.CreateNewAppointments(data));
+                throw new Exception(JsonConvert.SerializeObject(CustomErrorCodeMessages.tryingToAddMeetingInPastDate));
             }
-            else
+            try
             {
-                return NoConflict;
+                return (_appointmentsDAL.CreateNewAppointments(data));
             }
-            
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+
         }
 
-        public async Task<List<Appointment>> GetAllAddedAppointments()
+        public Dictionary<DateTime, List<Appointment>> GetAllAddedAppointments()
         {
-            return await _appointmentsDAL.GetAllAppointments();
+            return _appointmentsDAL.GetAllAppointments();
         }
-        public async Task<List<Appointment>> GetAppointments(string date)
+        public List<Appointment> GetAppointmentsForSelectedDate(DateTime date)
         {
-            return await _appointmentsDAL.GetAppointmentsByDate(date);
+
+            return _appointmentsDAL.GetAppointmentsByDate(date);
+
         }
 
-        public async Task<bool> RemoveAppointments(Guid id)
+        public List<Appointment> GetRangedList(DateTime date)
         {
-            return await _appointmentsDAL.RemoveAppointmentsById(id);
+            return _appointmentsDAL.GetRangedList(date);
+        }
+        public bool RemoveAppointments(Guid id, DateTime date)
+        {
+            return _appointmentsDAL.RemoveAppointmentsById(id, date);
+        }
+        public bool UpdateAppointments(Appointment data)
+        {
+
+            if (data.StartTime == data.EndTime)
+            {
+                throw new Exception(JsonConvert.SerializeObject(CustomErrorCodeMessages.startAndEndTimeAreSame));
+            }
+            if (data.EndTime < data.StartTime)
+            {
+                throw new Exception(JsonConvert.SerializeObject(CustomErrorCodeMessages.startTimeGreaterThanEndTime));
+            }
+            int compare = DateTime.Compare(data.StartTime, DateTime.Now);
+            if (compare == -1)
+            {
+                throw new Exception(JsonConvert.SerializeObject(CustomErrorCodeMessages.tryingToAddMeetingInPastDate));
+            }
+            try
+            {
+                return (_appointmentsDAL.UpdateAppointmentById(data));
+            }
+            catch(InvalidOperationException e)
+            {
+                throw new Exception(JsonConvert.SerializeObject(CustomErrorCodeMessages.idIsInvalid));  
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+
         }
 
-        public async Task<bool> UpdateAppointments(Appointment data)
-        {
-            
-            if(data.StartTime==data.EndTime)
-            {
-                throw new Exception("Cannot add a event as time clashes");
-            }
-            if( data.EndTime<data.StartTime)
-            {
-                throw new Exception("Cannot initiate event as StartTime is Greater than endTime");
-            }
-            bool NoConflict=await CheckUpdateConflict(data);
-            if(NoConflict==true)
-            {
-              return await _appointmentsDAL.UpdateAppointmentById(data);
-            }
-            else
-              return NoConflict;
-        }
-        private async Task<bool> CheckConflict(AddNewAppointment data)
-        {
-            
-            // bool isAnyList=DataStore.newList.Count!=0;
-            if(DataStore.newList.Any())
-            {
-                foreach(var item in DataStore.newList)
-                {
-                     if((data.StartTime<item.EndTime)&&(item.StartTime<data.EndTime))
-                     {
-                        return false;  
-                     }
-                }
-             return true; 
-            }
-         return true;
-        }
 
-        private async Task<bool> CheckUpdateConflict(Appointment data)
-        {
-            // if(isAnyList==true)
-            // {
-                foreach(var item in DataStore.newList)
-                {
-                    if(item.Id==data.Id)
-                    {
-                        continue;
-                    }
-                    if((data.StartTime<item.EndTime)&&(item.StartTime<data.EndTime))
-                     {
-                        return false;  
-                     }   
-                }
-             return true; 
-            // }
-            // else
-            // {
-            //   return false;
-            // }
-        }
-        
+
+
+
     }
 }

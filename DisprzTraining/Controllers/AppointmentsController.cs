@@ -2,10 +2,14 @@
 using Microsoft.AspNetCore.Mvc;
 using DisprzTraining.Business;
 using System.ComponentModel.DataAnnotations;
+using DisprzTraining.Data;
+using DisprzTraining.CustomErrorCodes;
+using DisprzTraining.Models.CustomCodeModel;
+using Newtonsoft.Json;
 
 namespace DisprzTraining.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/appointments")]
     [ApiController]
     public class AppointmentsController : Controller
     {
@@ -13,7 +17,7 @@ namespace DisprzTraining.Controllers
 
         public AppointmentsController(IAppointmentsBL appointmentsBL)
         {
-            _appointmentsBL =appointmentsBL;
+            _appointmentsBL = appointmentsBL;
         }
 
         //design - GET /api/appointments
@@ -22,82 +26,88 @@ namespace DisprzTraining.Controllers
         // public static List<Appointment> list=new List<Appointment>();
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(bool))]
-         [ProducesResponseType(StatusCodes.Status409Conflict)]
-        public async Task<IActionResult> CreateAppointment (AddNewAppointment data)
+        [ProducesResponseType(StatusCodes.Status409Conflict, Type = typeof(CustomCodes))]
+        public IActionResult CreateAppointment(AddNewAppointment data)
         {
-            try{
-
-             bool postCreated=await _appointmentsBL.CreateNewAppointment(data);
-             if(postCreated==true)
-             {
-                return Created(" ",postCreated);
-             }
-             else
-             {
-                return Conflict("Meeting is already assigned");
-             }
-            }
-            catch(Exception e)
+            try
             {
-                return Conflict(e.Message);
+                bool postCreated = _appointmentsBL.CreateNewAppointment(data);
+                if (postCreated == true)
+                {
+                    return Created("~api/appointments", postCreated);
+                }
+                else
+                {
+                    return Conflict(JsonConvert.SerializeObject(CustomErrorCodeMessages.meetingIsAlreadyAssigned));
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
             }
         }
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Appointment))]
-        // [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<List<Appointment>>> GetAppointments()
+        public ActionResult<Dictionary<DateTime, List<Appointment>>> GetAppointments()
         {
-           return Ok(await _appointmentsBL.GetAllAddedAppointments());
+            return Ok(_appointmentsBL.GetAllAddedAppointments());
         }
-
-        
         [HttpGet("{date}")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Appointment))]
-        // [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<List<Appointment>>> GetAppointmentsForDay([Required]string date)
+        [ProducesResponseType(StatusCodes.Status200OK,Type=typeof(List<Appointment>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<List<Appointment>> GetAppointmentsByDate([Required] DateTime date)
         {
-           return Ok(await _appointmentsBL.GetAppointments(date));
+
+            return Ok(_appointmentsBL.GetAppointmentsForSelectedDate(date));
+        }
+
+        [HttpGet("range/{date}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public ActionResult<List<Appointment>> GetRange(DateTime date)
+        {
+            return Ok(_appointmentsBL.GetRangedList(date));
         }
         
-
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}/{date}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(CustomCodes))]
 
-        public async Task<IActionResult> Remove(Guid id)
+        public IActionResult Remove(Guid id, DateTime date)
         {
-            bool IdIsThere=await _appointmentsBL.RemoveAppointments(id);
-            if (IdIsThere==true)
+            bool idIsThere = _appointmentsBL.RemoveAppointments(id, date);
+            if (idIsThere == true)
             {
-                     return NoContent();
+                return NoContent();
             }
             else
             {
-            return NotFound("enter Valid-id");
-            }  
+                return NotFound(JsonConvert.SerializeObject(CustomErrorCodeMessages.idIsInvalid));
+            }
         }
-        
+
         [HttpPut]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(bool))]
-        [ProducesResponseType(StatusCodes.Status409Conflict)]
-        public async Task<ActionResult> Update([FromBody]Appointment data)
+        [ProducesResponseType(StatusCodes.Status409Conflict, Type = typeof(CustomCodes))]
+        public IActionResult Update([FromBody] Appointment data)
         {
-            try{
-            bool updated=await _appointmentsBL.UpdateAppointments(data);
-            if(updated==true)
+            try
             {
-                return Ok(updated);
-            }
-            else
-            {
-            return Conflict("Meeting is already assigned");
-            }
-            }
-            catch(Exception e)
-            {
-                return Conflict(e.Message);
-            }
-        }
+                bool eventIsUpdated = _appointmentsBL.UpdateAppointments(data);
+                if (eventIsUpdated == true)
+                {
+                    return Ok(eventIsUpdated);
+                }
+                else
+                {
+                    return Conflict(JsonConvert.SerializeObject(CustomErrorCodeMessages.meetingIsAlreadyAssigned));
+                }
 
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+
+        }
     }
 }

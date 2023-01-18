@@ -2,16 +2,17 @@ using DisprzTraining.Models;
 
 namespace DisprzTraining.Business
 {
-    public interface IAppointmentsBL 
+    public interface IAppointmentsBL
     {
-        Task<bool> CreateNewAppointment(AddNewAppointment data);
+        bool CreateNewAppointment(AddNewAppointment data);
 
-        Task<List<Appointment>> GetAllAddedAppointments();
-       
-        Task<List<Appointment>> GetAppointments(string date);
+        Dictionary<DateTime,List<Appointment>>  GetAllAddedAppointments();
 
-        Task<bool> RemoveAppointments(Guid id);
+        List<Appointment> GetAppointmentsForSelectedDate(DateTime date);
 
-        Task<bool> UpdateAppointments(Appointment data);
+        List<Appointment> GetRangedList(DateTime date);
+        bool RemoveAppointments(Guid id,DateTime date);
+
+        bool UpdateAppointments(Appointment data);
     }
 }

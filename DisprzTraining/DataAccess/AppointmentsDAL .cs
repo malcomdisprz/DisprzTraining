@@ -7,21 +7,7 @@ namespace DisprzTraining.DataAccess
 {
     public class AppointmentsDAL : IAppointmentsDAL
     {
-        // private bool CheckConflict(List<Appointment> list,AddNewAppointment data)
-        // {
-        //     if (DataStore.newList.Any())
-        //     {
-        //         foreach (var item in DataStore.newList)
-        //         {
-        //             if ((data.StartTime < item.EndTime) && (item.StartTime < data.EndTime))
-        //             {
-        //                 return false;
-        //             }
-        //         }
-        //         return true;
-        //     }
-        //     return true;
-        // }
+
         private bool CheckConflict(List<Appointment> list, AddNewAppointment data)
         {
             foreach (var item in list)
@@ -33,8 +19,6 @@ namespace DisprzTraining.DataAccess
             }
             return true;
         }
-
-
         private bool CheckUpdateConflict(List<Appointment> list, Appointment data)
         {
 
@@ -52,23 +36,6 @@ namespace DisprzTraining.DataAccess
             return true;
 
         }
-        // private bool CheckUpdateConflict(Appointment data)
-        // {
-
-        //     foreach (var item in DataStore.newList)
-        //     {
-        //         if (item.Id == data.Id)
-        //         {
-        //             continue;
-        //         }
-        //         if ((data.StartTime < item.EndTime) && (item.StartTime < data.EndTime))
-        //         {
-        //             return false;
-        //         }
-        //     }
-        //     return true;
-
-        // }
 
         public bool CreateNewAppointments(AddNewAppointment data)
         {
@@ -121,7 +88,7 @@ namespace DisprzTraining.DataAccess
                 throw new Exception(JsonConvert.SerializeObject(CustomErrorCodeMessages.invalidInputs));
             }
         }
-        
+
         public List<Appointment> GetAppointmentsByDate(DateTime date)
         {
 
@@ -139,30 +106,35 @@ namespace DisprzTraining.DataAccess
         public List<Appointment> GetRangedList(DateTime date)
         {
             List<Appointment> value = new List<Appointment>();
-            DateTime endRange = date.AddDays(7);
-            var temp = DataStore.dictionaryData.SelectMany(x => x.Value);
-            foreach (var item in temp)
+
+            // DateTime endRange = date.AddDays(7);
+            DateTime keyDate = date;
+            // var temp = DataStore.dictionaryData.SelectMany(x => x.Value);
+            for (int i = 0; i < 7; i++)
             {
-                if (item.EndTime > date && item.EndTime < endRange && item.EndTime > DateTime.Now)
+                if (DataStore.dictionaryData.TryGetValue(keyDate, out List<Appointment> existingList))
                 {
-                    value.Add(item);
+                    foreach (var item in existingList)
+                    {
+                        if (item.EndTime > date && item.EndTime > DateTime.Now)
+                        {
+                            value.Add(item);
+                        }
+                    }
                 }
+                keyDate = keyDate.AddDays(1);
             }
+            // foreach (var item in temp)
+            // {
+            //     if (item.EndTime > date && item.EndTime < endRange && item.EndTime > DateTime.Now)
+            //     {
+            //         value.Add(item);
+            //     }
+            // }
             return value;
         }
         public bool RemoveAppointmentsById(Guid id, DateTime date)
         {
-            // try
-            // {
-            //     var remove = DataStore.newList.Single(r => r.Id == id);
-            //     DataStore.newList.Remove(remove);
-            //     return (true);
-
-            // }
-            // catch (Exception e)
-            // {
-            //     return (false);
-            // }
             if (DataStore.dictionaryData.TryGetValue(date, out List<Appointment> list))
             {
 

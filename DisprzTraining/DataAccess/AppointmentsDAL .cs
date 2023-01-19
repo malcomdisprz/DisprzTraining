@@ -72,32 +72,7 @@ namespace DisprzTraining.DataAccess
 
         public bool CreateNewAppointments(AddNewAppointment data)
         {
-            // try
-            // {
-            //     bool noConflict = CheckConflict(data);
-            //     if (noConflict)
-            //     {
-            //         var temp = data.Date;
-            //         DataStore.newList.Add(new Appointment()
-            //         {
-            //             Id = Guid.NewGuid(),
-            //             Date = temp,
-            //             Title = data.Title,
-            //             Description = data.Description,
-            //             Type = data.Type,
-            //             StartTime = data.StartTime,
-            //             EndTime = data.EndTime,
-            //         });
-            //         return (true);
-            //     }
-            //     else
-            //         return false;
 
-            // }
-            // catch (Exception e)
-            // {
-            //      return false;
-            // }\
             try
             {
                 if (DataStore.dictionaryData.TryGetValue(data.Date, out List<Appointment> existingList))
@@ -146,13 +121,10 @@ namespace DisprzTraining.DataAccess
                 throw new Exception(JsonConvert.SerializeObject(CustomErrorCodeMessages.invalidInputs));
             }
         }
-        public Dictionary<DateTime, List<Appointment>> GetAllAppointments()
-        {
-            return DataStore.dictionaryData;
-        }
+        
         public List<Appointment> GetAppointmentsByDate(DateTime date)
         {
-            // return DataStore.newList.FindAll(x => x.Date == date);
+
             List<Appointment> existingList;
             if (DataStore.dictionaryData.TryGetValue(date, out existingList))
             {
@@ -166,22 +138,17 @@ namespace DisprzTraining.DataAccess
         }
         public List<Appointment> GetRangedList(DateTime date)
         {
-            DateTime endTime = date.AddDays(7);
-            // foreach (var entry in DataStore.dictionaryData)
-            // {
-            //     List<Appointment> value = new List<Appointment>();
-            //     if (entry.Key > date && entry.Key < endTime)
-            //     {
-            //         if (entry.Value.FindAll(x => x.EndTime > DateTime.Now))
-            //         {
-
-            //         }
-            //     }
-            // }
-            return new List<Appointment>();
-            // var value=DataStore.dictionaryData.Where(x=>x.Value.FindAll(x=>x.EndTime>DateTime.Now));
-            // DataStore.dictionaryData.SelectMany(d => d.Value).ToList();
-
+            List<Appointment> value = new List<Appointment>();
+            DateTime endRange = date.AddDays(7);
+            var temp = DataStore.dictionaryData.SelectMany(x => x.Value);
+            foreach (var item in temp)
+            {
+                if (item.EndTime > date && item.EndTime < endRange && item.EndTime > DateTime.Now)
+                {
+                    value.Add(item);
+                }
+            }
+            return value;
         }
         public bool RemoveAppointmentsById(Guid id, DateTime date)
         {
@@ -218,27 +185,6 @@ namespace DisprzTraining.DataAccess
 
         public bool UpdateAppointmentById(Appointment data)
         {
-            // try
-            // {
-            //     bool noConflict = CheckUpdateConflict(data);
-            //     if (noConflict)
-            //     {
-            //         var valueToBeUpdated = (from s in DataStore.newList where (s.Id == data.Id && s.Date == data.Date) select s).Single();
-            //         valueToBeUpdated.Title = data.Title;
-            //         valueToBeUpdated.Description = data.Description;
-            //         valueToBeUpdated.Type = data.Type;
-            //         valueToBeUpdated.StartTime = data.StartTime;
-            //         valueToBeUpdated.EndTime = data.EndTime;
-            //         return true;
-            //     }
-            //     else
-            //         return false;
-            // }
-            // catch (Exception e)
-            // {
-            //     return false;
-            // }
-
             if (DataStore.dictionaryData.TryGetValue(data.Date, out List<Appointment> list))
             {
                 var valueToBeUpdated = (from s in list where (s.Id == data.Id && s.Date == data.Date) select s).Single();

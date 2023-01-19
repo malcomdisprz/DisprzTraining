@@ -46,12 +46,7 @@ namespace DisprzTraining.Controllers
                 return BadRequest(e.Message);
             }
         }
-        [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Appointment))]
-        public ActionResult<Dictionary<DateTime, List<Appointment>>> GetAppointments()
-        {
-            return Ok(_appointmentsBL.GetAllAddedAppointments());
-        }
+       
         [HttpGet("{date}")]
         [ProducesResponseType(StatusCodes.Status200OK,Type=typeof(List<Appointment>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -63,7 +58,7 @@ namespace DisprzTraining.Controllers
 
         [HttpGet("range/{date}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult<List<Appointment>> GetRange(DateTime date)
+        public ActionResult<List<Appointment>> GetListByRange(DateTime date)
         {
             return Ok(_appointmentsBL.GetRangedList(date));
         }

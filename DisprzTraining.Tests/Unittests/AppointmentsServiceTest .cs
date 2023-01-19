@@ -1,4 +1,5 @@
 
+using DisprzTraining.Data;
 using DisprzTraining.Models.CustomCodeModel;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -7,14 +8,13 @@ namespace DisprzTraining.Tests
 {
     public class AppointmentsServiceTest
     {
-        private readonly Appointment _test;
         private readonly IAppointmentsDAL _appointmentDAL;
         private readonly IAppointmentsBL _appointmentBL;
 
         private readonly AppointmentsController _appointment;
         public AppointmentsServiceTest()
         {
-            _test = new Appointment();
+        
             _appointmentDAL = new AppointmentsDAL();
             _appointmentBL = new AppointmentsBL(_appointmentDAL);
             _appointment = new AppointmentsController(_appointmentBL);
@@ -28,8 +28,6 @@ namespace DisprzTraining.Tests
             StartTime = DateTime.Now.AddMinutes(30),
             EndTime = DateTime.Now.AddHours(1),
         };
-
-
         private List<Appointment> GetTestData(ActionResult<List<Appointment>> getResult)
         {
             var resData = (List<Appointment>)((OkObjectResult)getResult.Result).Value;
@@ -189,7 +187,7 @@ namespace DisprzTraining.Tests
             //Assert
             var value = result?.Value;
             var value_1 = JsonConvert.DeserializeObject<CustomCodes>((string)value);
-            Assert.Equal("Cannot Add Event As StartTime And End Time Are Same",value_1.message);
+            Assert.Equal("Cannot Add Event As StartTime And End Time Are Same", value_1.message);
             Assert.Equal(400, result?.StatusCode);
         }
 
@@ -209,9 +207,9 @@ namespace DisprzTraining.Tests
 
             //Act
             var result = _appointment.CreateAppointment(data) as BadRequestObjectResult;
-            var value=JsonConvert.DeserializeObject<CustomCodes>((string)result.Value);
+            var value = JsonConvert.DeserializeObject<CustomCodes>((string)result.Value);
             //Assert
-            Assert.Equal("Cannot initiate event as StartTime is Greater than endTime",value.message);
+            Assert.Equal("Cannot initiate event as StartTime is Greater than endTime", value.message);
             Assert.Equal(400, result?.StatusCode);
         }
 
@@ -231,26 +229,11 @@ namespace DisprzTraining.Tests
 
             //Act
             var result = _appointment.CreateAppointment(data) as BadRequestObjectResult;
-            var value=JsonConvert.DeserializeObject<CustomCodes>((string)result.Value);
+            var value = JsonConvert.DeserializeObject<CustomCodes>((string)result.Value);
 
             //Assert
-            Assert.Equal("Unable to add Event in current event-duration",value.message);
+            Assert.Equal("Unable to add Event in current event-duration", value.message);
             Assert.Equal(400, result?.StatusCode);
-        }
-
-        [Fact]
-        public void Get_All_Appointments_Returns_Status_Ok()
-        {
-            //Arrange
-
-
-            //Act
-            var result = _appointment.GetAppointments();
-            var getResult = result.Result as OkObjectResult;
-
-            //Assert
-            Assert.Equal(200, getResult?.StatusCode);
-            Assert.IsType<Dictionary<DateTime, List<Appointment>>>(getResult?.Value);
         }
 
         [Fact]
@@ -273,7 +256,107 @@ namespace DisprzTraining.Tests
 
             _appointment.Remove(getData[0].Id, getData[0].Date);
         }
+        
+        [Fact]
+        public void Get_List_By_Range_Returns_Ok()
+        {
+            //Arrange
+            AddNewAppointment data_1=new AddNewAppointment()
+            {
+            Date = new DateTime(2023, 01, 26),
+            Title = "test",
+            Description = "test-case",
+            Type = "reminder",
+            StartTime = new DateTime(2023, 01, 26,11,0,0),
+            EndTime =new DateTime(2023, 01, 26,12,0,0),
+            };
+            AddNewAppointment data_2=new AddNewAppointment()
+            {
+            Date = new DateTime(2023, 01, 27),
+            Title = "test",
+            Description = "test-case",
+            Type = "reminder",
+            StartTime = new DateTime(2023, 01, 27, 11, 0, 0),
+            EndTime = new DateTime(2023, 01, 27, 12, 0, 0)
+            };
+            AddNewAppointment data_3=new AddNewAppointment()
+            {
+            Date = new DateTime(2023, 01, 27),
+            Title = "test",
+            Description = "test-case",
+            Type = "reminder",
+            StartTime = new DateTime(2023, 01, 27, 13, 0, 0),
+            EndTime = new DateTime(2023, 01, 27, 14, 0, 0)
+            };
+            AddNewAppointment data_4=new AddNewAppointment()
+            {
+            Date = new DateTime(2023, 01, 28),
+            Title = "test",
+            Description = "test-case",
+            Type = "reminder",
+            StartTime = new DateTime(2023, 01, 28, 13, 0, 0),
+            EndTime = new DateTime(2023, 01, 28, 14, 0, 0)
+            };
+            AddNewAppointment data_5=new AddNewAppointment()
+            {
+            Date = new DateTime(2023, 01, 29),
+            Title = "test",
+            Description = "test-case",
+            Type = "reminder",
+            StartTime = new DateTime(2023, 01, 29, 13, 0, 0),
+            EndTime = new DateTime(2023, 01, 29, 14, 0, 0)
+            };
+             AddNewAppointment data_6=new AddNewAppointment()
+            {
+            Date = new DateTime(2023, 01, 30),
+            Title = "test",
+            Description = "test-case",
+            Type = "reminder",
+            StartTime = new DateTime(2023, 01, 30, 13, 0, 0),
+            EndTime = new DateTime(2023, 01, 30, 14, 0, 0)
+            };
 
+            //--out of range event
+             AddNewAppointment data_7=new AddNewAppointment()
+            {
+            Date = new DateTime(2023, 02, 03),
+            Title = "test",
+            Description = "test-case",
+            Type = "reminder",
+            StartTime = new DateTime(2023, 02,03, 13, 0, 0),
+            EndTime = new DateTime(2023, 02, 03, 14, 0, 0)
+            };
+            DateTime date= new DateTime(2023,01,26);
+            //Act
+            _appointment.CreateAppointment(data_1);
+            _appointment.CreateAppointment(data_2);
+            _appointment.CreateAppointment(data_3);
+            _appointment.CreateAppointment(data_4);
+            _appointment.CreateAppointment(data_5);
+            _appointment.CreateAppointment(data_6);
+            _appointment.CreateAppointment(data_7);
+
+            var getResult=_appointment.GetListByRange(date);
+            var value=getResult.Result as OkObjectResult;
+            var getData=GetTestData(getResult);
+            var getResultData_7=_appointment.GetAppointmentsByDate(data_7.Date);
+            var getData_2=GetTestData(getResultData_7);
+
+            //Assert
+            Assert.Equal(200,value.StatusCode);
+            Assert.Equal(6,getData.Count); //---out of range element not added;
+
+            var remove_1=_appointment.Remove(getData[5].Id,getData[5].Date);
+            var remove_2=_appointment.Remove(getData[4].Id,getData[4].Date);
+            var remove_3=_appointment.Remove(getData[3].Id,getData[3].Date);
+            var remove_4=_appointment.Remove(getData[2].Id,getData[2].Date);
+            var remove_5=_appointment.Remove(getData[1].Id,getData[1].Date);
+            var remove_6=_appointment.Remove(getData[0].Id,getData[0].Date);
+            _appointment.Remove(getData_2[0].Id,getData_2[0].Date);
+            
+            // DataStore.dictionaryData.Clear();
+
+        }
 
         [Fact]
         public void Get_Appointments__Returns_Empty_List()
@@ -285,7 +368,7 @@ namespace DisprzTraining.Tests
             var getResult = _appointment.GetAppointmentsByDate(date);
             var result = getResult.Result as OkObjectResult;
             var getData = GetTestData(getResult);
-            
+
             //Assert
             Assert.True(getData.Count == 0);
             Assert.IsType<List<Appointment>>(result.Value);
@@ -384,7 +467,7 @@ namespace DisprzTraining.Tests
             var createEvent = _appointment.CreateAppointment(data_2);
             var getResult1 = _appointment.GetAppointmentsByDate(testData.Date);
             var getResult = _appointment.GetAppointmentsByDate(data_2.Date);
-            
+
             var getData = GetTestData(getResult);
 
 
@@ -481,7 +564,7 @@ namespace DisprzTraining.Tests
             });
             var updatedResult = (BadRequestObjectResult)updateEvent;
 
-            var value=JsonConvert.DeserializeObject<CustomCodes>((string)updatedResult.Value);
+            var value = JsonConvert.DeserializeObject<CustomCodes>((string)updatedResult.Value);
             //event duration is in past
             var updateEvent_2 = _appointment.Update(new Appointment()
             {
@@ -493,18 +576,18 @@ namespace DisprzTraining.Tests
                 StartTime = DateTime.Now.AddMinutes(-30),
                 EndTime = DateTime.Now.AddMinutes(-10),
             });
-            var updatedResult_2=updateEvent_2 as BadRequestObjectResult;
-            var value_2=JsonConvert.DeserializeObject<CustomCodes>((string)updatedResult_2.Value);
+            var updatedResult_2 = updateEvent_2 as BadRequestObjectResult;
+            var value_2 = JsonConvert.DeserializeObject<CustomCodes>((string)updatedResult_2.Value);
 
             //Assert
-            Assert.Equal("Cannot initiate event as StartTime is Greater than endTime",value.message);
-            Assert.Equal("Unable to add Event in current event-duration",value_2.message);
+            Assert.Equal("Cannot initiate event as StartTime is Greater than endTime", value.message);
+            Assert.Equal("Unable to add Event in current event-duration", value_2.message);
             Assert.Equal(400, updatedResult.StatusCode);
             Assert.IsType<BadRequestObjectResult>(updateEvent_2);
 
             _appointment.Remove(getData[0].Id, getData[0].Date);
             var removeResult = _appointment.Remove(getData_1[0].Id, getData_1[0].Date);
-            
+
 
         }
         [Fact]
@@ -537,14 +620,14 @@ namespace DisprzTraining.Tests
                 StartTime = new DateTime(2023, 01, 31, 4, 50, 0),
                 EndTime = new DateTime(2023, 01, 31, 4, 50, 0),
             });
-            var updatedResult=toUpdate as BadRequestObjectResult;
-            var value=JsonConvert.DeserializeObject<CustomCodes>((string)updatedResult.Value);
+            var updatedResult = toUpdate as BadRequestObjectResult;
+            var value = JsonConvert.DeserializeObject<CustomCodes>((string)updatedResult.Value);
             //Assert
-            
+
             Assert.IsType<BadRequestObjectResult>(toUpdate);
-            Assert.Equal("Cannot Add Event As StartTime And End Time Are Same",value.message);
+            Assert.Equal("Cannot Add Event As StartTime And End Time Are Same", value.message);
             var removeResult = _appointment.Remove(getId, getData[0].Date);
-            
+
         }
 
         [Fact]
@@ -568,8 +651,8 @@ namespace DisprzTraining.Tests
                 StartTime = new DateTime(2023, 01, 31, 4, 50, 0),
                 EndTime = new DateTime(2023, 01, 31, 5, 50, 0),
             });
-            var updatedResult=toUpdate as BadRequestObjectResult;
-            var value=JsonConvert.DeserializeObject<CustomCodes>((string)updatedResult.Value);
+            var updatedResult = toUpdate as BadRequestObjectResult;
+            var value = JsonConvert.DeserializeObject<CustomCodes>((string)updatedResult.Value);
             //-id invalid
             var updateEvent = _appointment.Update(new Appointment()
             {
@@ -581,16 +664,16 @@ namespace DisprzTraining.Tests
                 StartTime = DateTime.Now.AddMinutes(30),
                 EndTime = DateTime.Now.AddHours(3),
             });
-            var updatedResult_2=updateEvent as BadRequestObjectResult;
-            var value_2=JsonConvert.DeserializeObject<CustomCodes>((string)updatedResult_2.Value);
+            var updatedResult_2 = updateEvent as BadRequestObjectResult;
+            var value_2 = JsonConvert.DeserializeObject<CustomCodes>((string)updatedResult_2.Value);
             //Assert
-            Assert.Equal("Invalid Date",value?.message);
-            Assert.Equal("Enter Valid Id",value_2.message);
+            Assert.Equal("Invalid Date", value?.message);
+            Assert.Equal("Enter Valid Id", value_2.message);
             Assert.IsType<BadRequestObjectResult>(toUpdate);
             Assert.IsType<BadRequestObjectResult>(updateEvent);
             var removeResult = _appointment.Remove(getId, getData[0].Date);
 
-           
+
         }
 
         [Fact]

@@ -41,10 +41,7 @@ namespace DisprzTraining.Business
 
         }
 
-        public Dictionary<DateTime, List<Appointment>> GetAllAddedAppointments()
-        {
-            return _appointmentsDAL.GetAllAppointments();
-        }
+       
         public List<Appointment> GetAppointmentsForSelectedDate(DateTime date)
         {
 

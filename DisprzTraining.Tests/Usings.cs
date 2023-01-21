@@ -1,5 +1,4 @@
 global using Xunit;   
-global using DisprzTraining.Tests.MockData;
 global using DisprzTraining.Business;
 global using DisprzTraining.Controllers;
 global using DisprzTraining.DataAccess;

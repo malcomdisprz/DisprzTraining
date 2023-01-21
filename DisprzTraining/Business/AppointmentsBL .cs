@@ -17,31 +17,12 @@ namespace DisprzTraining.Business
 
         public bool CreateNewAppointment(AddNewAppointment data)
         {
-            if (data.StartTime == data.EndTime)
-            {
-                throw new Exception(JsonConvert.SerializeObject(CustomErrorCodeMessages.startAndEndTimeAreSame));
-            }
-            if (data.EndTime < data.StartTime)
-            {
-                throw new Exception(JsonConvert.SerializeObject(CustomErrorCodeMessages.startTimeGreaterThanEndTime));
-            }
-            int comparedValue = DateTime.Compare(data.StartTime, DateTime.Now);
-            if (comparedValue == -1)
-            {
-                throw new Exception(JsonConvert.SerializeObject(CustomErrorCodeMessages.tryingToAddMeetingInPastDate));
-            }
-            try
-            {
-                return (_appointmentsDAL.CreateNewAppointments(data));
-            }
-            catch (Exception e)
-            {
-                throw new Exception(e.Message);
-            }
+            CheckInputTime(data);
+
+            return (_appointmentsDAL.CreateNewAppointments(data));
 
         }
 
-       
         public List<Appointment> GetAppointmentsForSelectedDate(DateTime date)
         {
 
@@ -53,13 +34,55 @@ namespace DisprzTraining.Business
         {
             return _appointmentsDAL.GetRangedList(date);
         }
+
         public bool RemoveAppointments(Guid id, DateTime date)
         {
             return _appointmentsDAL.RemoveAppointmentsById(id, date);
         }
-        public bool UpdateAppointments(Appointment data)
+        
+        public bool UpdateAppointments(UpdateAppointment data)
         {
+            DateTime convertedDate = data.Appointment.Date.Date;
+            DateTime OldDate = (data.OldDate).Date;
+            AddNewAppointment dataToBeUpdated = new AddNewAppointment()
+            {
+                Date = data.Appointment.Date,
+                Title = data.Appointment.Title,
+                Description = data.Appointment.Description,
+                Type = data.Appointment.Type,
+                StartTime = data.Appointment.StartTime,
+                EndTime = data.Appointment.EndTime,
+            };
+            CheckInputTime(dataToBeUpdated);
 
+            if (_appointmentsDAL.CheckForId(data.Appointment.Id, OldDate))
+            {
+                if (convertedDate == OldDate)
+                {
+                    return (_appointmentsDAL.UpdateAppointmentById(data.Appointment));
+                }
+                else
+                {
+
+                    var updatedAppointment = _appointmentsDAL.CreateNewAppointments(dataToBeUpdated);
+                    if (updatedAppointment)
+                    {
+                        return _appointmentsDAL.RemoveAppointmentsById(data.Appointment.Id, OldDate);
+
+                    }
+                    else
+                    {
+                        return updatedAppointment;
+                    }
+                }
+            }
+            else
+            {
+                throw new Exception(JsonConvert.SerializeObject(CustomErrorCodeMessages.idIsInvalid));
+            }
+        }
+        private void CheckInputTime(AddNewAppointment data)
+        {
             if (data.StartTime == data.EndTime)
             {
                 throw new Exception(JsonConvert.SerializeObject(CustomErrorCodeMessages.startAndEndTimeAreSame));
@@ -73,24 +96,6 @@ namespace DisprzTraining.Business
             {
                 throw new Exception(JsonConvert.SerializeObject(CustomErrorCodeMessages.tryingToAddMeetingInPastDate));
             }
-            try
-            {
-                return (_appointmentsDAL.UpdateAppointmentById(data));
-            }
-            catch(InvalidOperationException e)
-            {
-                throw new Exception(JsonConvert.SerializeObject(CustomErrorCodeMessages.idIsInvalid));  
-            }
-            catch (Exception e)
-            {
-                throw new Exception(e.Message);
-            }
-
         }
-
-
-
-
-
     }
 }

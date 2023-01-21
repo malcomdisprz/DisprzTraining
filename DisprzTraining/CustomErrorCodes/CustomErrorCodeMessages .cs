@@ -31,18 +31,18 @@ namespace DisprzTraining.CustomErrorCodes
         };
         public static CustomCodes invalidDate = new CustomCodes()
         {
-            message="Invalid Date",
-            errorCode="INVALID_DATE",
+            message = "Invalid Date",
+            errorCode = "INVALID_DATE",
         };
         public static CustomCodes invalidDateOrID = new CustomCodes()
         {
-            message="Invalid Date or id",
-            errorCode="INVALID_DATE_ID",
+            message = "Invalid Date or id",
+            errorCode = "INVALID_DATE_ID",
         };
-         public static CustomCodes invalidInputs = new CustomCodes()
+        public static CustomCodes invalidInputs = new CustomCodes()
         {
-            message="Unable to process the data check your inputs",
-            errorCode="INVALID_INPUTS",
+            message = "Unable to process the data check your inputs",
+            errorCode = "INVALID_INPUTS",
         };
     }
 }

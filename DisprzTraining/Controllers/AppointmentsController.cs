@@ -27,6 +27,7 @@ namespace DisprzTraining.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(bool))]
         [ProducesResponseType(StatusCodes.Status409Conflict, Type = typeof(CustomCodes))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(CustomCodes))]
         public IActionResult CreateAppointment(AddNewAppointment data)
         {
             try
@@ -46,9 +47,9 @@ namespace DisprzTraining.Controllers
                 return BadRequest(e.Message);
             }
         }
-       
+
         [HttpGet("{date}")]
-        [ProducesResponseType(StatusCodes.Status200OK,Type=typeof(List<Appointment>))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<Appointment>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public ActionResult<List<Appointment>> GetAppointmentsByDate([Required] DateTime date)
         {
@@ -57,12 +58,12 @@ namespace DisprzTraining.Controllers
         }
 
         [HttpGet("range/{date}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(bool))]
         public ActionResult<List<Appointment>> GetListByRange(DateTime date)
         {
             return Ok(_appointmentsBL.GetRangedList(date));
         }
-        
+
         [HttpDelete("{id}/{date}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(CustomCodes))]
@@ -83,7 +84,8 @@ namespace DisprzTraining.Controllers
         [HttpPut]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(bool))]
         [ProducesResponseType(StatusCodes.Status409Conflict, Type = typeof(CustomCodes))]
-        public IActionResult Update([FromBody] Appointment data)
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(CustomCodes))]
+        public IActionResult Update([FromBody] UpdateAppointment data)
         {
             try
             {
@@ -96,7 +98,6 @@ namespace DisprzTraining.Controllers
                 {
                     return Conflict(JsonConvert.SerializeObject(CustomErrorCodeMessages.meetingIsAlreadyAssigned));
                 }
-
             }
             catch (Exception e)
             {

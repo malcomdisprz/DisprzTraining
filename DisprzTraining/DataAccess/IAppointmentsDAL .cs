@@ -12,6 +12,7 @@ namespace DisprzTraining.DataAccess
         List<Appointment> GetRangedList(DateTime date);
         bool RemoveAppointmentsById(Guid id, DateTime date);
         bool UpdateAppointmentById(Appointment data);
+        bool CheckForId(Guid id, DateTime date);
 
     }
 }

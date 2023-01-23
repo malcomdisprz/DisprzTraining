@@ -86,8 +86,7 @@ namespace DisprzTraining.DataAccess
         public List<Appointment> GetAppointmentsByDate(DateTime date)
         {
             DateTime convertedDate = date.Date;
-            List<Appointment> existingList;
-            if (DataStore.dictionaryData.TryGetValue(convertedDate, out existingList))
+            if (DataStore.dictionaryData.TryGetValue(convertedDate, out List<Appointment> existingList))
             {
                 return existingList;
             }
@@ -143,10 +142,10 @@ namespace DisprzTraining.DataAccess
         public bool UpdateAppointmentById(Appointment data)
         {
             DateTime date = (data.Date).Date;
-            if (DataStore.dictionaryData.TryGetValue(date, out List<Appointment> list))
-            {
-                // var valueToBeUpdated = (from s in list where (s.Id == data.Id) select s).Single();
-
+                 
+            // if (DataStore.dictionaryData.TryGetValue(date, out List<Appointment> list))
+            // {
+                List<Appointment>list=DataStore.dictionaryData[date];
                 bool noConflict = CheckUpdateConflict(list, data);
                 if (noConflict)
                 {
@@ -163,11 +162,11 @@ namespace DisprzTraining.DataAccess
                 {
                     return false;
                 }
-            }
-            else
-            {
-                throw new Exception(JsonConvert.SerializeObject(CustomErrorCodeMessages.invalidDate));
-            }
+            // }
+            // else
+            // {
+            //     throw new Exception(JsonConvert.SerializeObject(CustomErrorCodeMessages.invalidDate));
+            // }
         }
         public bool CheckForId(Guid id, DateTime date)
         {
@@ -183,7 +182,6 @@ namespace DisprzTraining.DataAccess
             {
                 throw new Exception(JsonConvert.SerializeObject(CustomErrorCodeMessages.invalidDate));
             }
-
         }
     }
 }

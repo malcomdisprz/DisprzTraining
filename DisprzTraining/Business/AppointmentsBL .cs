@@ -63,7 +63,6 @@ namespace DisprzTraining.Business
                 }
                 else
                 {
-
                     var updatedAppointment = _appointmentsDAL.CreateNewAppointments(dataToBeUpdated);
                     if (updatedAppointment)
                     {

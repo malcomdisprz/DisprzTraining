@@ -14,6 +14,7 @@ namespace DisprzTraining.Utils
 
             services.AddScoped<IAppointmentBL, AppointmentBL>();
             services.AddScoped<IAppointmentDAL, AppointmentDAL>();
+            services.AddCors();
         }
     }
 }

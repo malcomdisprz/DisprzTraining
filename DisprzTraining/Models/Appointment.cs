@@ -9,4 +9,7 @@
         
     }
 }
-
+//dotnet test --collect:"XPlat Code Coverage"
+//dotnet tool install -g dotnet-reportgenerator-globaltool
+//reportgenerator -reports:"TestResults\{id}\coverage.cobertura.xml" -targetdir:"coveragereport" -reporttypes:Html
+//replace id

@@ -2,10 +2,11 @@
 using Microsoft.AspNetCore.Mvc;
 using DisprzTraining.Business;
 using System;
+using System.Net;
 
 namespace DisprzTraining.Controllers
 {
-    [Route("api")]
+    // [Route("api")]
     [ApiController]
     public class AppointmentController : Controller
     {
@@ -15,41 +16,58 @@ namespace DisprzTraining.Controllers
             _AppointmentBL = appointmentBL;
         }
 
-        [HttpGet("appointments")]
+        [HttpGet]
+        [Route("appointments")]
+        [ProducesResponseType(typeof(Appointment), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetAllAppointmentsAsync()
         {
             var appointments = await _AppointmentBL.GetAllAppointmentsBLAsync();
-            return (appointments == null) ? NotFound("No Event found") : Ok(appointments);
+            return Ok(appointments);
         }
 
-        [HttpGet("appointments/Date")]
-        public async Task<IActionResult> GetAppointmentByDateAsync(DateTime GivenDate)
+        [HttpGet]
+        [Route("appointments/date")]
+        [ProducesResponseType(typeof(Appointment), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> GetAppointmentByDateAsync(DateTime Date)
         {
-            var appointments = await _AppointmentBL.GetAppointmentByDateBLAsync(GivenDate);
-            return (appointments == null)? NotFound("No Event found on the given date") : Ok(appointments);
+            var appointments = await _AppointmentBL.GetAppointmentByDateBLAsync(Date);
+            return Ok(appointments);
         }
 
-        [HttpGet("appointments/event")]
+        [HttpGet]
+        [Route("appointments/event")]
+        [ProducesResponseType(typeof(Appointment), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetAppointmentByEventAsync(string Event)
         {
             var appointment = await _AppointmentBL.GetAppointmentByEventBLAsync(Event);
-            return (appointment == null)? NotFound("Event not found") : Ok(appointment);
+            return (appointment == null) ? NotFound("No event found ") : Ok(appointment);
         }
 
-        [HttpGet("appointments/event/{id}")]
+        [HttpGet]
+        [Route("appointments/event/{id}")]
+        [ProducesResponseType(typeof(Appointment), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetAppointmentByIdAsync(Guid id)
         {
             var appointment = await _AppointmentBL.GetAppointmentByIdBLAsync(id);
-            return (appointment == null)? NotFound("Id not found") : Ok(appointment);
+            return (appointment == null) ? NotFound("Id not found") : Ok(appointment);
         }
 
-        [HttpPost("appointments")]
+        [HttpPost]
+        [Route("appointments")]
+        [ProducesResponseType(typeof(Appointment), (int)HttpStatusCode.Created)]
+        [ProducesResponseType((int)HttpStatusCode.Conflict)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> CreateAppointmentAsync(Appointment appointment)
         {
-            if (appointment.FromTime > appointment.ToTime)
+            if (appointment.FromTime >= appointment.ToTime)
             {
                 return BadRequest("Invalid time interval");
             }
+          
             else
             {
                 var NewAppointment = await _AppointmentBL.CreateAppointmentBLAsync(appointment);
@@ -57,25 +75,33 @@ namespace DisprzTraining.Controllers
             }
         }
 
-        [HttpPut("appointments")]
+        [HttpPut]
+        [Route("appointments")]
+        [ProducesResponseType(typeof(Appointment), (int)HttpStatusCode.NoContent)]
+        [ProducesResponseType((int)HttpStatusCode.Conflict)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> UpdateAppointmentAsync(Appointment request)
         {
-            if (request.FromTime > request.ToTime)
+            if (request.FromTime >= request.ToTime)
             {
                 return BadRequest("Invalid time interval");
             }
+           
             else
             {
                 var NewAppointment = await _AppointmentBL.UpdateAppointmentBLAsync(request);
-                return (NewAppointment == null)? Conflict("Meeting Exixts in the given time") : NoContent();
+                return (NewAppointment == null) ? Conflict("Meeting Exixts in the given time") : NoContent();
             }
         }
 
-        [HttpDelete("appointments/event/{id}")]
+        [HttpDelete]
+        [Route("appointments/event/{id}")]
+        [ProducesResponseType(typeof(Appointment), (int)HttpStatusCode.NoContent)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> DeleteAppointmentAsync(Guid id)
         {
             var appointment = _AppointmentBL.DeleteAppointmentBLAsync(id);
-            return (appointment == null)? NotFound("Id not found") :NoContent();
+            return (appointment == null) ? NotFound("Id not found") : NoContent();
         }
     }
 }

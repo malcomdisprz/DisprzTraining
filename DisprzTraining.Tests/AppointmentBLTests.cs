@@ -85,11 +85,11 @@ namespace DisprzTraining.Tests
         public async Task GetAppointmentByEvent_WithexistingItem_ReturnsType()
         {
             //Arrange
-            mockDAL.Setup(repo => repo.GetAppointmentByEventDALAsync(items[0].EventName)).ReturnsAsync(items);
+            mockDAL.Setup(repo => repo.GetAppointmentByEventDALAsync(obj.EventName)).ReturnsAsync(obj);
             // Act
-            var result = await BussinessLayer.GetAppointmentByEventBLAsync(items[0].EventName);
+            var result = await BussinessLayer.GetAppointmentByEventBLAsync(obj.EventName);
             // Assert
-            result.Should().BeOfType<List<Appointment>>();
+            result.Should().BeOfType<Appointment>();
         }
 
         [Fact]

@@ -14,11 +14,11 @@ namespace DisprzTraining.Business
         {
             return  await _appointmentDAL.GetAllAppointmentsDALAsync();
         }
-         public async Task<IEnumerable<Appointment>> GetAppointmentByDateBLAsync(DateTime GivenDate)
+         public async Task<IEnumerable<Appointment>> GetAppointmentByDateBLAsync(DateTime Date)
         {
-            return  await _appointmentDAL.GetAppointmentByDateDALAsync(GivenDate);
+            return  await _appointmentDAL.GetAppointmentByDateDALAsync(Date);
         }
-        public async Task<IEnumerable<Appointment>> GetAppointmentByEventBLAsync(string Event )
+        public async Task<Appointment> GetAppointmentByEventBLAsync(string Event )
         {
             return  await _appointmentDAL.GetAppointmentByEventDALAsync(Event);
         }

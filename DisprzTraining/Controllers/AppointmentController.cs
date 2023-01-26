@@ -6,7 +6,6 @@ using System.Net;
 
 namespace DisprzTraining.Controllers
 {
-    // [Route("api")]
     [ApiController]
     public class AppointmentController : Controller
     {
@@ -67,7 +66,6 @@ namespace DisprzTraining.Controllers
             {
                 return BadRequest("Invalid time interval");
             }
-          
             else
             {
                 var NewAppointment = await _AppointmentBL.CreateAppointmentBLAsync(appointment);
@@ -86,7 +84,6 @@ namespace DisprzTraining.Controllers
             {
                 return BadRequest("Invalid time interval");
             }
-           
             else
             {
                 var NewAppointment = await _AppointmentBL.UpdateAppointmentBLAsync(request);

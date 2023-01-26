@@ -13,9 +13,8 @@ namespace DisprzTraining.DataAccess
         public Boolean CheckConflict(Appointment appointment)
         {
             var newappointment = appointments.FindAll(x => (x.FromTime >= appointment.FromTime && x.FromTime < appointment.ToTime) ||
-                                                       (x.ToTime > appointment.FromTime && x.ToTime <= appointment.ToTime) ||
-                                                       (x.FromTime < appointment.FromTime && x.ToTime > appointment.ToTime));
-            // return newappointment;
+                                                           (x.ToTime > appointment.FromTime && x.ToTime <= appointment.ToTime) ||
+                                                           (x.FromTime < appointment.FromTime && x.ToTime > appointment.ToTime));
             if (newappointment.Any())
             {
                 var newevent = newappointment.FindAll(x => x.Id != appointment.Id);
@@ -23,11 +22,8 @@ namespace DisprzTraining.DataAccess
                 {
                     return true;
                 }
-                // return false;
             }
             return false;
-
-
         }
 
         public async Task<IEnumerable<Appointment>> GetAllAppointmentsDALAsync()
@@ -36,7 +32,7 @@ namespace DisprzTraining.DataAccess
         }
         public async Task<IEnumerable<Appointment>> GetAppointmentByDateDALAsync(DateTime Date)
         {
-            var appointment = appointments.FindAll(x => x.FromTime.ToShortDateString() == Date.ToShortDateString()).OrderBy(s => s.FromTime);
+            var appointment = appointments.FindAll(x => x.FromTime.ToShortDateString() == Date.ToShortDateString()).OrderBy(s => s.FromTime).ToList();
             return appointment.Any() ? await Task.FromResult(appointment) : null;
         }
         public async Task<Appointment> GetAppointmentByEventDALAsync(string Event)
@@ -58,7 +54,6 @@ namespace DisprzTraining.DataAccess
                 return await Task.FromResult(appointment);
             }
             return null;
-
         }
         public async Task<Appointment> UpdateAppointmentDALAsync(Appointment request)
         {
@@ -74,7 +69,6 @@ namespace DisprzTraining.DataAccess
                     return await Task.FromResult(request);
                 }
                 return null;
-
             }
             return null;
         }

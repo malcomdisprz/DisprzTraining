@@ -10,6 +10,7 @@ namespace DisprzTraining.Business
         {
             _appointmentDAL = appointmentDAL;
         }
+
         public async Task<IEnumerable<Appointment>> GetAllAppointmentsBLAsync()
         {
             return  await _appointmentDAL.GetAllAppointmentsDALAsync();

@@ -27,7 +27,7 @@ namespace DisprzTraining.Tests
         {
             new Appointment(){Id = Guid.NewGuid(), EventName = "Stand Up" , FromTime = new DateTime(2023,01,01,13,30,00), ToTime = new DateTime(2023,01,01,15,30,00)}
         };
-        Appointment obj = new Appointment() { Id = Guid.NewGuid(), EventName = "Stand Up",  FromTime = new DateTime(2023,01,01,13,30,00), ToTime = new DateTime(2023,01,01,15,30,00) };
+        Appointment obj = new Appointment() { Id = Guid.NewGuid(), EventName = "Stand Up", FromTime = new DateTime(2023, 01, 01, 13, 30, 00), ToTime = new DateTime(2023, 01, 01, 15, 30, 00) };
 
         //get all appointment
 
@@ -51,7 +51,7 @@ namespace DisprzTraining.Tests
             // Act
             var result = (OkObjectResult)await controller.GetAllAppointmentsAsync();
             // Assert
-             result.Should().BeOfType<OkObjectResult>();
+            result.Should().BeOfType<OkObjectResult>();
             Assert.Equal(HttpStatusCode.OK, (HttpStatusCode)result.StatusCode);
         }
 
@@ -96,15 +96,9 @@ namespace DisprzTraining.Tests
             mock.Setup(repo => repo.GetAppointmentByEventBLAsync(obj.EventName)).ReturnsAsync(obj);
             // Act
             var result = (OkObjectResult)await controller.GetAppointmentByEventAsync(obj.EventName);
-            // Appointment ResultValue = Appointment result.Value;
             // Assert
             result.Should().BeOfType<OkObjectResult>();
             Assert.Equal(HttpStatusCode.OK, (HttpStatusCode)result.StatusCode);
-            // ResultValue.Should().BeEquivalentTo(items);
-            // ResultValue.Should().OnlyContain(
-            //     value => value.EventName == items[0].EventName
-            // );
-
         }
 
         [Fact]
@@ -130,7 +124,7 @@ namespace DisprzTraining.Tests
             var result = (OkObjectResult)await controller.GetAppointmentByIdAsync(obj.Id);
             // Assert
             result.Should().BeOfType<OkObjectResult>();
-            Assert.Equal(HttpStatusCode.OK,(HttpStatusCode)result.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, (HttpStatusCode)result.StatusCode);
         }
 
 
@@ -143,7 +137,7 @@ namespace DisprzTraining.Tests
             var result = (NotFoundObjectResult)await controller.GetAppointmentByIdAsync(Guid.NewGuid());
             // Assert
             result.Should().BeOfType<NotFoundObjectResult>();
-            Assert.Equal(HttpStatusCode.NotFound,(HttpStatusCode)result.StatusCode);
+            Assert.Equal(HttpStatusCode.NotFound, (HttpStatusCode)result.StatusCode);
         }
         //create appoinytment 
 
@@ -157,7 +151,7 @@ namespace DisprzTraining.Tests
             var result = (BadRequestObjectResult)await controller.CreateAppointmentAsync(item);
             //Assert
             result.Should().BeOfType<BadRequestObjectResult>();
-            Assert.Equal(HttpStatusCode.BadRequest,(HttpStatusCode)result.StatusCode);
+            Assert.Equal(HttpStatusCode.BadRequest, (HttpStatusCode)result.StatusCode);
         }
 
         [Fact]
@@ -169,7 +163,7 @@ namespace DisprzTraining.Tests
             var result = (ConflictObjectResult)await controller.CreateAppointmentAsync(obj);
             //Assert
             result.Should().BeOfType<ConflictObjectResult>();
-            Assert.Equal(HttpStatusCode.Conflict,(HttpStatusCode)result.StatusCode);
+            Assert.Equal(HttpStatusCode.Conflict, (HttpStatusCode)result.StatusCode);
         }
 
         [Fact]
@@ -182,7 +176,7 @@ namespace DisprzTraining.Tests
             var result = (CreatedResult)await controller.CreateAppointmentAsync(obj);
             //Assert
             result.Should().BeOfType<CreatedResult>();
-            Assert.Equal(HttpStatusCode.Created,(HttpStatusCode)result.StatusCode);
+            Assert.Equal(HttpStatusCode.Created, (HttpStatusCode)result.StatusCode);
         }
 
         //update appointment
@@ -193,10 +187,10 @@ namespace DisprzTraining.Tests
             var item = new Appointment() { Id = Guid.NewGuid(), EventName = "Stand Up", FromTime = new DateTime(2022, 12, 14, 13, 30, 00), ToTime = new DateTime(2022, 12, 14, 12, 00, 00) };
             mock.Setup(repo => repo.UpdateAppointmentBLAsync(It.IsAny<Appointment>())).ReturnsAsync(item);
             //Act
-            var result= (BadRequestObjectResult)await controller.UpdateAppointmentAsync(item);
+            var result = (BadRequestObjectResult)await controller.UpdateAppointmentAsync(item);
             //Assert
             result.Should().BeOfType<BadRequestObjectResult>();
-            Assert.Equal(HttpStatusCode.BadRequest,(HttpStatusCode)result.StatusCode);
+            Assert.Equal(HttpStatusCode.BadRequest, (HttpStatusCode)result.StatusCode);
         }
 
         [Fact]
@@ -208,7 +202,7 @@ namespace DisprzTraining.Tests
             var result = (ConflictObjectResult)await controller.UpdateAppointmentAsync(obj);
             //Assert
             result.Should().BeOfType<ConflictObjectResult>();
-            Assert.Equal(HttpStatusCode.Conflict,(HttpStatusCode)result.StatusCode);
+            Assert.Equal(HttpStatusCode.Conflict, (HttpStatusCode)result.StatusCode);
         }
 
         [Fact]
@@ -220,7 +214,7 @@ namespace DisprzTraining.Tests
             var result = (NoContentResult)await controller.UpdateAppointmentAsync(obj);
             //Assert
             result.Should().BeOfType<NoContentResult>();
-            Assert.Equal(HttpStatusCode.NoContent,(HttpStatusCode)result.StatusCode);
+            Assert.Equal(HttpStatusCode.NoContent, (HttpStatusCode)result.StatusCode);
         }
 
 
@@ -233,7 +227,7 @@ namespace DisprzTraining.Tests
             var result = (NoContentResult)await controller.DeleteAppointmentAsync(Guid.NewGuid());
             //Assert
             result.Should().BeOfType<NoContentResult>();
-            Assert.Equal(HttpStatusCode.NoContent,(HttpStatusCode)result.StatusCode);
+            Assert.Equal(HttpStatusCode.NoContent, (HttpStatusCode)result.StatusCode);
         }
 
         [Fact]
@@ -245,7 +239,7 @@ namespace DisprzTraining.Tests
             var result = (NotFoundObjectResult)await controller.DeleteAppointmentAsync(Guid.NewGuid());
             //Assert
             result.Should().BeOfType<NotFoundObjectResult>();
-            Assert.Equal(HttpStatusCode.NotFound,(HttpStatusCode)result.StatusCode);
+            Assert.Equal(HttpStatusCode.NotFound, (HttpStatusCode)result.StatusCode);
         }
     }
 }

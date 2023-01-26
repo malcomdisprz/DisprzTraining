@@ -221,12 +221,12 @@ var assemblies = [
   {
     "name": "DisprzTraining",
     "classes": [
-      { "name": "DisprzTraining.Business.AppointmentBL", "rp": "DisprzTraining_AppointmentBL.html", "cl": 25, "ucl": 0, "cal": 25, "tl": 44, "ct": "LineCoverage", "cbm": "-", "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [] },
-      { "name": "DisprzTraining.Controllers.AppointmentController", "rp": "DisprzTraining_AppointmentController.html", "cl": 40, "ucl": 0, "cal": 40, "tl": 107, "ct": "LineCoverage", "cbm": "-", "cb": 16, "tb": 16, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [] },
-      { "name": "DisprzTraining.DataAccess.AppointmentDAL", "rp": "DisprzTraining_AppointmentDAL.html", "cl": 55, "ucl": 0, "cal": 55, "tl": 74, "ct": "LineCoverage", "cbm": "-", "cb": 34, "tb": 36, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [] },
+      { "name": "DisprzTraining.Business.AppointmentBL", "rp": "DisprzTraining_AppointmentBL.html", "cl": 25, "ucl": 0, "cal": 25, "tl": 45, "ct": "LineCoverage", "cbm": "-", "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [] },
+      { "name": "DisprzTraining.Controllers.AppointmentController", "rp": "DisprzTraining_AppointmentController.html", "cl": 40, "ucl": 0, "cal": 40, "tl": 104, "ct": "LineCoverage", "cbm": "-", "cb": 14, "tb": 14, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [] },
+      { "name": "DisprzTraining.DataAccess.AppointmentDAL", "rp": "DisprzTraining_AppointmentDAL.html", "cl": 64, "ucl": 0, "cal": 64, "tl": 86, "ct": "LineCoverage", "cbm": "-", "cb": 28, "tb": 28, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [] },
       { "name": "DisprzTraining.Models.Appointment", "rp": "DisprzTraining_Appointment.html", "cl": 4, "ucl": 0, "cal": 4, "tl": 15, "ct": "LineCoverage", "cbm": "-", "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [] },
-      { "name": "DisprzTraining.Utils.ConfigureDependenciesExtension", "rp": "DisprzTraining_ConfigureDependenciesExtension.html", "cl": 0, "ucl": 6, "cal": 6, "tl": 20, "ct": "LineCoverage", "cbm": "-", "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [] },
-      { "name": "Program", "rp": "DisprzTraining_Program.html", "cl": 0, "ucl": 24, "cal": 24, "tl": 40, "ct": "LineCoverage", "cbm": "-", "cb": 0, "tb": 2, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [] },
+      { "name": "DisprzTraining.Utils.ConfigureDependenciesExtension", "rp": "DisprzTraining_ConfigureDependenciesExtension.html", "cl": 6, "ucl": 0, "cal": 6, "tl": 20, "ct": "LineCoverage", "cbm": "-", "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [] },
+      { "name": "Program", "rp": "DisprzTraining_Program.html", "cl": 24, "ucl": 0, "cal": 24, "tl": 40, "ct": "LineCoverage", "cbm": "-", "cb": 2, "tb": 2, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [] },
     ]},
 ];
 

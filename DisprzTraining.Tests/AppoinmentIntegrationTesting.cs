@@ -2,15 +2,7 @@ using DisprzTraining.Business;
 using DisprzTraining.Controllers;
 using DisprzTraining.DataAccess;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Moq;
 using DisprzTraining.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FluentAssertions;
-using Microsoft.DotNet.Scaffolding.Shared.CodeModifier.CodeChange;
 using System.Net;
 using System.Net.Http.Json;
 
@@ -83,8 +75,6 @@ namespace DisprzTraining.Tests
 
             var response = await _client.PostAsJsonAsync("http://localhost:5169/appointments", postRequest);
 
-            // response.EnsureSuccessStatusCode();
-
             var responseString = await response.Content.ReadAsStringAsync();
 
             Assert.Contains("StandUp", responseString);
@@ -104,8 +94,6 @@ namespace DisprzTraining.Tests
 
             var response = await _client.PostAsJsonAsync("http://localhost:5169/appointments", postRequest);
 
-            // response.EnsureSuccessStatusCode();
-
             var responseString = await response.Content.ReadAsStringAsync();
 
             Assert.Contains("Meeting Exixts in the given time", responseString);
@@ -124,8 +112,6 @@ namespace DisprzTraining.Tests
             };
 
             var response = await _client.PostAsJsonAsync("http://localhost:5169/appointments", postRequest);
-
-            // response.EnsureSuccessStatusCode();
 
             var responseString = await response.Content.ReadAsStringAsync();
 

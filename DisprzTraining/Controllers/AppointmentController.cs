@@ -18,7 +18,6 @@ namespace DisprzTraining.Controllers
         [HttpGet]
         [Route("appointments")]
         [ProducesResponseType(typeof(Appointment), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetAllAppointmentsAsync()
         {
             var appointments = await _AppointmentBL.GetAllAppointmentsBLAsync();
@@ -28,7 +27,6 @@ namespace DisprzTraining.Controllers
         [HttpGet]
         [Route("appointments/date")]
         [ProducesResponseType(typeof(Appointment), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetAppointmentByDateAsync(DateTime Date)
         {
             var appointments = await _AppointmentBL.GetAppointmentByDateBLAsync(Date);
@@ -38,7 +36,6 @@ namespace DisprzTraining.Controllers
         [HttpGet]
         [Route("appointments/event")]
         [ProducesResponseType(typeof(Appointment), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetAppointmentByEventAsync(string Event)
         {
             var appointment = await _AppointmentBL.GetAppointmentByEventBLAsync(Event);
@@ -48,7 +45,6 @@ namespace DisprzTraining.Controllers
         [HttpGet]
         [Route("appointments/event/{id}")]
         [ProducesResponseType(typeof(Appointment), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetAppointmentByIdAsync(Guid id)
         {
             var appointment = await _AppointmentBL.GetAppointmentByIdBLAsync(id);
@@ -58,8 +54,6 @@ namespace DisprzTraining.Controllers
         [HttpPost]
         [Route("appointments")]
         [ProducesResponseType(typeof(Appointment), (int)HttpStatusCode.Created)]
-        [ProducesResponseType((int)HttpStatusCode.Conflict)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> CreateAppointmentAsync(Appointment appointment)
         {
             if (appointment.FromTime >= appointment.ToTime)
@@ -75,9 +69,6 @@ namespace DisprzTraining.Controllers
 
         [HttpPut]
         [Route("appointments")]
-        [ProducesResponseType(typeof(Appointment), (int)HttpStatusCode.NoContent)]
-        [ProducesResponseType((int)HttpStatusCode.Conflict)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> UpdateAppointmentAsync(Appointment request)
         {
             if (request.FromTime >= request.ToTime)
@@ -93,8 +84,6 @@ namespace DisprzTraining.Controllers
 
         [HttpDelete]
         [Route("appointments/event/{id}")]
-        [ProducesResponseType(typeof(Appointment), (int)HttpStatusCode.NoContent)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> DeleteAppointmentAsync(Guid id)
         {
             var appointment = _AppointmentBL.DeleteAppointmentBLAsync(id);

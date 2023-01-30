@@ -1,16 +1,8 @@
 using DisprzTraining.Business;
-using DisprzTraining.Controllers;
 using DisprzTraining.DataAccess;
-using Microsoft.AspNetCore.Mvc;
 using Moq;
 using DisprzTraining.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using FluentAssertions;
-using Microsoft.DotNet.Scaffolding.Shared.CodeModifier.CodeChange;
 
 
 namespace DisprzTraining.Tests
